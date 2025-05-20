@@ -1,0 +1,89 @@
+# Passo a Passo para Rodar o Backend
+
+Este guia explica como configurar e rodar o backend de um projeto Node.js que usa Sequelize, MySQL e migrations. Siga os passos abaixo cuidadosamente.
+
+## Passo 1: Clonar o Repositório
+Clone o projeto para sua máquina local (substitua o URL pelo do seu repositório):
+
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd projeto-seguranca-da-informacao
+```
+
+## Passo 2: Instalar Dependências
+No diretório do projeto, instale as dependências do Node.js:
+
+```bash
+npm install
+```
+
+## Passo 3: Configurar o Arquivo .env
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```
+DB_NAME=projeto_LGPD
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_HOST=localhost
+DB_PORT=3306
+JWT_SECRET=3nZ!vR8wq7@HjT6#pF$2gLmXs!YkD9eQ
+```
+
+Ajuste as variáveis `DB_USER`, `DB_PASSWORD`, `DB_HOST` e `DB_PORT` conforme a configuração do seu MySQL local. O `DB_NAME` deve corresponder ao nome do banco de dados que será criado.
+
+**Atenção**: Não adicione o arquivo `.env` ao controle de versão (ele já está no `.gitignore`).
+
+## Passo 4: Configurar o Banco de Dados
+1. **Acesse o MySQL**: Entre no MySQL com o usuário configurado no `.env`:
+
+2. **Criar o Banco de Dados**: No prompt do MySQL, crie o banco de dados especificado em `DB_NAME`:
+
+   ```sql
+   CREATE DATABASE projeto_LGPD;
+   EXIT;
+   ```
+
+## Passo 5: Configurar o Sequelize CLI
+O projeto usa o Sequelize CLI para gerenciar migrations. O arquivo de configuração está em `config/config.js`, que já lê as variáveis do `.env`. Verifique se o arquivo `config/config.js` existe e contém:
+
+```javascript
+require('dotenv').config();
+
+module.exports = {
+  development: {
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'mysql'
+  },
+  test: { /* Configurações semelhantes */ },
+  production: { /* Configurações semelhantes */ }
+};
+```
+
+Se o arquivo não existir, crie-o com o conteúdo acima.
+
+## Passo 6: Executar Migrations
+Para criar as tabelas no banco de dados, execute as migrations:
+
+```bash
+npx sequelize-cli db:migrate
+```
+
+Isso criará a tabela `Users` (e outras, se houver mais migrations) no banco `projeto_LGPD`.
+
+## Passo 7: Iniciar o Backend
+Inicie o servidor do backend:
+
+```bash
+npm start
+```
+
+Ou, se o script de start não estiver definido no `package.json`, execute:
+
+```bash
+node app.js
+```.
+
