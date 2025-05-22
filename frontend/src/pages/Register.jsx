@@ -2,6 +2,7 @@ import { useState } from 'react';
 import API from '../services/api';
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -17,6 +18,7 @@ export default function Register() {
     try {
       await API.post('/register', form);
       alert('Cadastro realizado com sucesso!');
+      navigate('/users');
     } catch (err) {
       alert('Erro ao cadastrar: ' + (err.response?.data?.error || err.message));
     }

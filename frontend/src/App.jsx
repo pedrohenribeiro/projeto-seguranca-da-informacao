@@ -1,11 +1,14 @@
+import { useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import RoutesApp from './routes/AppRoutes';
 
 function App() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="ml-64 p-6 w-full min-h-screen bg-gray-100">
+      {isAuthenticated && <Sidebar />}
+      <div className={isAuthenticated ? 'ml-64 w-full p-6 min-h-screen bg-gray-100' : 'w-full p-6 min-h-screen bg-gray-100'}>
         <RoutesApp />
       </div>
     </div>

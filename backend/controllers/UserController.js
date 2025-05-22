@@ -6,6 +6,12 @@ require('dotenv').config();
 exports.register = async (req, res) => {
   try {
     const { username, email, telefone, password, role } = req.body;
+
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Nome de usuário já está em uso' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -22,10 +28,11 @@ exports.register = async (req, res) => {
   }
 };
 
+
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
+    const { username, password } = req.body;
+    const user = await User.findOne({ where: { username } });
 
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
