@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +8,11 @@ export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) navigate('/index');
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -37,7 +41,6 @@ export default function Login() {
             value={form.username}
             onChange={handleChange}
           />
-
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -55,7 +58,6 @@ export default function Login() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-
           <button type="submit" className="bg-azul text-white py-2 rounded hover:bg-gray-800 transition">
             Entrar
           </button>

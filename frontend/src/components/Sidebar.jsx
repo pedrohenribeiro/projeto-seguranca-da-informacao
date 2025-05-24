@@ -1,8 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   return (
     <div
@@ -19,6 +28,7 @@ const Sidebar = () => {
       >
         Meu App
       </h1>
+
       <nav className="flex flex-col gap-4">
         <Link
           to="/index"
@@ -37,6 +47,16 @@ const Sidebar = () => {
           Configurações
         </Link>
       </nav>
+
+      {/* Botão de sair */}
+      <button
+        onClick={handleLogout}
+        className={`mt-auto p-2 text-left rounded transition-opacity duration-300 ${
+          isHovered ? 'opacity-100 hover:bg-gray-800' : 'opacity-0'
+        }`}
+      >
+        Sair
+      </button>
     </div>
   );
 };
