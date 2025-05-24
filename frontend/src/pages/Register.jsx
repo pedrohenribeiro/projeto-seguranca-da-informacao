@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+
   const [form, setForm] = useState({
     username: '',
     cpf: '',
@@ -16,18 +19,24 @@ export default function Register() {
     role: 'user'
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/index');
+    }
+  }, [isAuthenticated, navigate]);
+
   const formatCPF = (value) =>
     value.replace(/\D/g, '')
-         .replace(/(\d{3})(\d)/, '$1.$2')
-         .replace(/(\d{3})(\d)/, '$1.$2')
-         .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-         .slice(0, 14);
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+      .slice(0, 14);
 
   const formatTelefone = (value) =>
     value.replace(/\D/g, '')
-         .replace(/^(\d{2})(\d)/, '($1) $2')
-         .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
-         .slice(0, 15);
+      .replace(/^(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
+      .slice(0, 15);
 
   const isValidCPF = (cpf) => {
     const clean = cpf.replace(/\D/g, '');
@@ -161,6 +170,7 @@ export default function Register() {
             <option value="user">Usuário</option>
             <option value="admin">Admin</option>
           </select>
+
           <button
             type="submit"
             className="bg-azul text-white py-2 rounded hover:bg-gray-800 transition"
