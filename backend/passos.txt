@@ -43,47 +43,20 @@ Ajuste as variáveis `DB_USER`, `DB_PASSWORD`, `DB_HOST` e `DB_PORT` conforme a 
    EXIT;
    ```
 
-## Passo 5: Configurar o Sequelize CLI
-O projeto usa o Sequelize CLI para gerenciar migrations. O arquivo de configuração está em `config/config.js`, que já lê as variáveis do `.env`. Verifique se o arquivo `config/config.js` existe e contém:
-
-```javascript
-require('dotenv').config();
-
-module.exports = {
-  development: {
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql'
-  },
-  test: { /* Configurações semelhantes */ },
-  production: { /* Configurações semelhantes */ }
-};
-```
-
-Se o arquivo não existir, crie-o com o conteúdo acima.
-
-## Passo 6: Executar Migrations
+## Passo 5: Executar Migrations
 Para criar as tabelas no banco de dados, execute as migrations:
 
 ```bash
 npx sequelize-cli db:migrate
 ```
 
-Isso criará a tabela `Users` (e outras, se houver mais migrations) no banco `projeto_LGPD`.
+Isso criará as tabelas no banco
 
-## Passo 7: Iniciar o Backend
+## Passo 6: Iniciar o Backend
 Inicie o servidor do backend:
 
 ```bash
 npm start
 ```
 
-Ou, se o script de start não estiver definido no `package.json`, execute:
-
-```bash
-node app.js
-```.
 
