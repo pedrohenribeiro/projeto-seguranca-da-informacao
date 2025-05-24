@@ -12,6 +12,14 @@ const User = sequelize.define('User', {
     allowNull: false,
     unique: true
   },
+  nome:{
+    type: DataTypes.STRING,
+  },
+  cpf:{
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -29,8 +37,8 @@ const User = sequelize.define('User', {
     defaultValue: 'user'
   }
 }, {
-  tableName: 'Users', // Nome da tabela no banco
-  timestamps: true // Para createdAt e updatedAt
+  tableName: 'Users', 
+  timestamps: true 
 });
 
 module.exports = User;
