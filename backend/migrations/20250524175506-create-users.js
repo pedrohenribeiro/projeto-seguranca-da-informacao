@@ -14,7 +14,15 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      nome: {
+        type: Sequelize.STRING,
+      },
       email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
+      cpf: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true

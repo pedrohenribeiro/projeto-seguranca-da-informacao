@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -16,7 +18,7 @@ export default function Login() {
       const res = await API.post('/login', form);
       localStorage.setItem('token', res.data.token);
       login();
-      navigate('/users');
+      navigate('/index');
     } catch (err) {
       alert('Erro no login: ' + (err.response?.data?.error || err.message));
     }
@@ -28,23 +30,33 @@ export default function Login() {
         <h2 className="text-2xl font-bold mb-4 text-center text-azul">Login</h2>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
-            type="text"           
-            name="username"       
+            type="text"
+            name="username"
             placeholder="Username"
             className="border p-2 rounded"
-            value={form.username} 
+            value={form.username}
             onChange={handleChange}
           />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Senha"
-            className="border p-2 rounded"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <button type="submit" className="bg-azul text-white py-2 rounded hover:bg-blue-800 transition">
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Senha"
+              className="border p-2 rounded w-full pr-10"
+              value={form.password}
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-2.5 text-gray-600 hover:text-azul"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <button type="submit" className="bg-azul text-white py-2 rounded hover:bg-gray-800 transition">
             Entrar
           </button>
         </form>

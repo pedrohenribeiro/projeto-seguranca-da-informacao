@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        azul: '#1D4ED8',
+        azul: '#000000',
       },
     },
   },

@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
-import Users from '../pages/Users';
+import Index from '../pages/Index';
+import Configuracoes from '../pages/Configuracoes';
+import EditarPefil from '../pages/EditarPerfil';
 
 const RoutesApp = () => {
   return (
@@ -9,7 +11,9 @@ const RoutesApp = () => {
       <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/users" element={<Users />} />
+      <Route path="/config" element={<Configuracoes />} />
+      <Route path="/index" element={<Index />} />
+      <Route path="/perfil/editar" element={<EditarPefil />} />
     </Routes>
   );
 };
