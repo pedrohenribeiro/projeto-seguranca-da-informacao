@@ -4,6 +4,7 @@ import Register from '../pages/Register';
 import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
+import Portabilidade from '../pages/Portabilidade';
 
 const RoutesApp = () => {
   return (
@@ -14,6 +15,7 @@ const RoutesApp = () => {
       <Route path="/config" element={<Configuracoes />} />
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
+      <Route path="/perfil/portabilidade" element={<Portabilidade />} />
     </Routes>
   );
 };
