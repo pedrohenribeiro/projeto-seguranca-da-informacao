@@ -31,6 +31,17 @@ fs
     db[model.name] = model;
   });
 
+  // Associações
+const { User, Receita, Favorito } = db;
+
+if (User && Receita && Favorito) {
+  User.hasMany(Favorito, { foreignKey: 'userId' });
+  Receita.hasMany(Favorito, { foreignKey: 'receitaId' });
+
+  Favorito.belongsTo(User, { foreignKey: 'userId' });
+  Favorito.belongsTo(Receita, { foreignKey: 'receitaId' });
+}
+
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -39,5 +50,6 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 
 module.exports = db;

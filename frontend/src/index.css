@@ -5,3 +5,9 @@
 body {
   @apply bg-white text-black;
 }
+
+html, body, #root {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
