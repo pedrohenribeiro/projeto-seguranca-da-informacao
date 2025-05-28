@@ -5,6 +5,7 @@ const router = express.Router();
 const userController = require('../controllers/UserController');
 const enderecoController = require('../controllers/EnderecoController');
 const { verifyToken } = require('../middlewares/AuthMiddleware');
+const receitaController = require('../controllers/ReceitaController');
 
 router.post(
   '/register',
@@ -52,5 +53,10 @@ router.put(
 );
 
 router.delete('/address', verifyToken, enderecoController.deleteMyAddress);
+
+router.post('/receita', verifyToken, receitaController.registerReceita);
+router.get('/receitas', verifyToken, receitaController.getAllReceitas);
+router.put('/receita/:id', verifyToken, receitaController.updateReceita);
+router.delete('/receita/:id', verifyToken, receitaController.deleteReceita);
 
 module.exports = router;

@@ -4,7 +4,7 @@ import Register from '../pages/Register';
 import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
-import RegisterFood from '../pages/RegisterFood';
+import RegisterReceita from '../pages/RegisterReceita';
 
 const RoutesApp = () => {
   return (
@@ -15,7 +15,7 @@ const RoutesApp = () => {
       <Route path="/config" element={<Configuracoes />} />
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
-      <Route path="/registerFood" element={<RegisterFood />} />
+      <Route path="/registerReceita" element={<RegisterReceita />} />
     </Routes>
   );
 };

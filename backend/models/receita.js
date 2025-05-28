@@ -1,29 +1,44 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Receita extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      //Receita.hasMany(models.Favorito, { foreignKey: 'receitaId' });
-    }
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+
+const Receita = sequelize.define('Receita', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  nomereceita: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  descricao:{
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  imagem:{
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  ingredientes: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  modopreparo: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  rendimento: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  tempopreparo: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
-  Receita.init({
-    nomereceita: DataTypes.STRING,
-    descricao: DataTypes.STRING,
-    imagem: DataTypes.STRING,
-    ingredientes: DataTypes.TEXT,
-    modopreparo: DataTypes.TEXT,
-    rendimento: DataTypes.STRING,
-    tempopreparo: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Receita',
-  });
-  return Receita;
-};
+}, {
+  tableName: 'Receitas', 
+  timestamps: true 
+});
+
+module.exports = Receita;

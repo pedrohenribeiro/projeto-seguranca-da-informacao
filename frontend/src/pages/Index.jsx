@@ -1,6 +1,22 @@
 import '../pages/style.css';
+import { useState, useEffect, React } from 'react';
+import API from '../services/api';
 
 export default function Index() {
+  const [receitas, setReceitas] = useState([]);
+
+  useEffect(() => {
+    const fetchReceitas = async () => {
+      try {
+        const response = await API.get('/receitas');
+        setReceitas(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar receitas:', error);
+      }
+    };
+
+    fetchReceitas();
+  }, []);
 
   return (
     <div className='background'> 
@@ -8,28 +24,18 @@ export default function Index() {
 
       <div className='contain'>
 
-        <div className='card'>
+        {receitas.map((receita) => (
+          <div className='card' key={receita.id}>
             <div className='card-top'>
-                <img src='bolo.jpg' alt='Bolo de Cenoura' className='image-card'/>
+              <img src={receita.imagem} alt={receita.nomereceita} className='image-card' />
             </div>
-            
             <div className='card-bottom'>
-                <h3 className='card-title'>Bolo de Cenoura</h3>
-                <p className='card-description'>Uma deliciosa receita de bolo de cenoura com cobertura de chocolate.</p>
+              <h3 className='card-title'>{receita.nomereceita}</h3>
+              <p className='card-description'>{receita.descricao}</p>
             </div>
-        </div>
+          </div>
+        ))}
 
-
-        <div className='card'>
-            <div className='card-top'>
-                <img src='lanche.jpg' alt='Lanche' className='image-card'/>
-            </div>
-            
-            <div className='card-bottom'>
-                <h3 className='card-title'>Lanche</h3>
-                <p className='card-description'>Um delicioso lanche com hamburguer e queijo.</p>
-            </div>
-        </div>
       </div>
     </div>
   );

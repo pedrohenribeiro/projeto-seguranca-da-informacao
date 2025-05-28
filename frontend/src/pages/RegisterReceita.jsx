@@ -1,13 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import API from '../services/api';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
-export default function RegisterFood() {
+export default function RegisterReceita() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
     nomereceita: '',
@@ -32,12 +28,13 @@ export default function RegisterFood() {
     e.preventDefault();
 
     try {
-      await API.post('/register', form);
+      await API.post('/receita', form);
       alert('Cadastro de receita realizado com sucesso!');
       navigate('/index');
     } catch (err) {
       alert('Erro ao cadastrar: ' + (err.response?.data?.error || err.message));
     }
+    console.log('Formulário enviado:', form);
   };
 
   return (

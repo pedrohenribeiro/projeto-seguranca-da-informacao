@@ -24,7 +24,7 @@ export default function Index() {
       </div>
 
       <div className="top-bar-right">
-        <Link to="/registerFood">
+        <Link to="/registerReceita">
           <button><img src="food.png" alt="Food Icon" className="food-top-icon" /></button>
         </Link>
         <Link to="/config">
