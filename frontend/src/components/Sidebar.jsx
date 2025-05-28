@@ -1,10 +1,9 @@
+import './Sidebar.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const Sidebar = () => {
-  const [isHovered, setIsHovered] = useState(false);
-  const { logout } = useAuth();
+export default function Index() {
+   const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -14,51 +13,28 @@ const Sidebar = () => {
   };
 
   return (
-    <div
-      className={`h-screen bg-black text-white flex flex-col p-4 fixed transition-all duration-300 ease-in-out ${
-        isHovered ? 'w-64' : 'w-12'
-      }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <h1
-        className={`text-2xl font-bold mb-8 transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        Meu App
-      </h1>
+    <div className="top-bar">
+      <div className="top-bar-left">
+        <img src="cooknow.png" alt="Logo" className="logo" />
+        <h2 className="text-logo">CookNow</h2>
+      </div>
 
-      <nav className="flex flex-col gap-4">
-        <Link
-          to="/index"
-          className={`p-2 rounded transition-opacity duration-300 ${
-            isHovered ? 'opacity-100 hover:bg-gray-800' : 'opacity-0'
-          }`}
-        >
-          Home
-        </Link>
-        <Link
-          to="/config"
-          className={`p-2 rounded transition-opacity duration-300 ${
-            isHovered ? 'opacity-100 hover:bg-gray-800' : 'opacity-0'
-          }`}
-        >
-          Configurações
-        </Link>
-      </nav>
+      <div className="top-bar-center">
+        <a href="/index" className="nav-link">Receitas</a>
+      </div>
 
-      {/* Botão de sair */}
-      <button
-        onClick={handleLogout}
-        className={`mt-auto p-2 text-left rounded transition-opacity duration-300 ${
-          isHovered ? 'opacity-100 hover:bg-gray-800' : 'opacity-0'
-        }`}
-      >
-        Sair
-      </button>
+      <div className="top-bar-right">
+        <Link to="/food">
+          <button><img src="food.png" alt="Food Icon" className="food-top-icon" /></button>
+        </Link>
+        <Link to="/config">
+          <button><img src="user.png" alt="User Icon" className="user-top-icon" /></button>
+        </Link>
+        <button onClick={handleLogout}>
+          <img src="exit.png" alt="Exit Icon" className="exit-top-icon" />
+        </button>
+      </div>
     </div>
-  );
-};
 
-export default Sidebar;
+  );
+}

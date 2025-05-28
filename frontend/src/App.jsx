@@ -20,21 +20,18 @@ function App() {
   }
 
   return (
-    <div className="flex">
+    <>
       {!isPublicPage && isAuthenticated && (
-        <Sidebar
-          isHovered={isSidebarHovered}
-          setIsHovered={setIsSidebarHovered}
-        />
+        <Sidebar/>
       )}
       <div
-        className={`w-full min-h-screen bg-gray-100 transition-all duration-300 ease-in-out ${
-          !isPublicPage && isAuthenticated ? (isSidebarHovered ? 'ml-64' : 'ml-12') : ''
+        className={`min-h-screen bg-gray-100  ${
+          !isPublicPage && isAuthenticated ? isSidebarHovered : ''
         }`}
       >
         <RoutesApp />
       </div>
-    </div>
+    </>
   );
 }
 

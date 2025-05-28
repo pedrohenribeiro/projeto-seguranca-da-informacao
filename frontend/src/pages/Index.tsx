@@ -1,7 +1,24 @@
+import '../pages/style.css';
+
 export default function Index() {
+
   return (
-    <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center text-azul">Página Inicial</h2>
+    <div className='background'> 
+      <h2 className='text'>Venha conhecer nossas deliciosas receitas</h2>
+
+      <div className='container'>
+
+        <div className='card'>
+          <div className='card-top'>
+            <img src='cooknow.png' alt='Bolo de Cenoura' className='food-top-icon '/>
+          </div>
+          
+          <div className='card-bottom'>
+            <h3 className='card-title'>Bolo de Cenoura</h3>
+            <p className='card-description'>Uma deliciosa receita de bolo de cenoura com cobertura de chocolate.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
