@@ -5,6 +5,8 @@ import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
+import OAuthConsent from '../pages/oAuth/OAuthConsent';
+
 
 const RoutesApp = () => {
   return (
@@ -16,6 +18,7 @@ const RoutesApp = () => {
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
+      <Route path="/oauth/authorize" element={<OAuthConsent />} />
     </Routes>
   );
 };

@@ -94,4 +94,44 @@ exports.updateMe = async (req, res) => {
   }
 };
 
+exports.portabilidadeLogin = async (req, res) => {
+  try {
+    const { email, password, client_id, client_secret } = req.body;
+
+    if (
+      client_id !== process.env.CLIENT_ID_PORTABILIDADE ||
+      client_secret !== process.env.CLIENT_SECRET_PORTABILIDADE
+    ) {
+      return res.status(401).json({ error: 'Credenciais inválidas da aplicação.' });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Senha incorreta' });
+
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao autenticar usuário externo' });
+  }
+};
+
+exports.verifyUserCredentials = async (email, password) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user) return null;
+
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) return null;
+
+  return user;
+};
+
+
 
