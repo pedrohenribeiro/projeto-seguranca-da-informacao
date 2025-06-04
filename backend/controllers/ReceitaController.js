@@ -1,4 +1,4 @@
-const Receita = require('../models/Receita');
+const Receita = require('../models/receita');
 require('dotenv').config();
 
 exports.registerReceita = async (req, res) => {
