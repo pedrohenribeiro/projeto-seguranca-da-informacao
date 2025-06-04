@@ -10,14 +10,14 @@ export default function LoginForm({ onLogin }) {
   };
 
   return (
-    <form onSubmit={submit} style={{ maxWidth: 300, margin: 'auto' }}>
+    <form onSubmit={submit} className="w-full max-w-xs mx-auto">
       <input
         type="text"
         placeholder="Usuário"
         value={username}
         onChange={e => setUsername(e.target.value)}
         required
-        style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
+        className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       />
       <input
         type="password"
@@ -25,11 +25,15 @@ export default function LoginForm({ onLogin }) {
         value={password}
         onChange={e => setPassword(e.target.value)}
         required
-        style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
+        className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       />
-      <button type="submit" style={{ width: '100%', padding: '8px' }}>
+      <button
+        type="submit"
+        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+      >
         Entrar
       </button>
     </form>
+
   );
 }

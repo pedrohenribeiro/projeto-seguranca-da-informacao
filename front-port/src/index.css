@@ -67,32 +67,3 @@ button:focus-visible {
   }
 }
 
-.login-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 2rem;
-  text-align: center;
-  background: #f3f3f3;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-}
-
-.login-form input {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 0.5rem 0;
-}
-
-button {
-  padding: 10px 20px;
-  cursor: pointer;
-  background: #6200ee;
-  color: white;
-  border: none;
-  border-radius: 8px;
-}
-
-.cooknow-button {
-  background: #ff5722;
-}
