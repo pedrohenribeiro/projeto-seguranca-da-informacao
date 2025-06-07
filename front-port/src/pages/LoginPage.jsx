@@ -1,9 +1,25 @@
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 import { loginWithCredentials } from '../services/authService';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem('token', token);
+        navigate('/dashboard');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [navigate]);
 
   const handleLogin = async ({ username, password }) => {
     try {
@@ -26,10 +42,10 @@ export default function LoginPage() {
     oauthUrl.searchParams.set('state', 'xyz123');
 
     window.open(
-  oauthUrl.toString(),
-  'CookNowLogin',
-  'width=500,height=600,left=100,top=100'
-);
+      oauthUrl.toString(),
+      'CookNowLogin',
+      'width=500,height=600,left=100,top=100'
+    );
 
   };
 

@@ -20,20 +20,23 @@ export default function CookNowCallback() {
         });
 
         const { access_token } = res.data;
-        localStorage.setItem('token', access_token); // unifica nome do token
 
-        navigate('/dashboard');
+        // Envia o token para a janela principal
+        window.opener.postMessage({ token: access_token }, window.location.origin);
+
+        // Fecha a janela pop-up
+        window.close();
       } catch (err) {
         console.error('Erro ao trocar code por token:', err);
         alert('Erro ao autenticar com CookNow');
-        navigate('/');
+        window.close();
       }
     };
 
     if (code && state === 'xyz123') {
       exchangeCodeForToken();
     }
-  }, [params, navigate]);
+  }, [params]);
 
   return <p>Autenticando com CookNow...</p>;
 }
