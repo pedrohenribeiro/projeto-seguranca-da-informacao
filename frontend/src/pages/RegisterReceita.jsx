@@ -23,7 +23,6 @@ export default function RegisterReceita() {
   }));
 };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -62,6 +61,9 @@ export default function RegisterReceita() {
             className="border p-4 rounded resize-none"
             />
             <p className="text-sm text-gray-500 text-right">{form.descricao.length}/100</p>
+            {form.imagem && (
+              <img src={form.imagem} alt={form.nomereceita} className='modal-image' />
+            )}
           <input
             type="text"
             name="imagem"

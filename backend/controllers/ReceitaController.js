@@ -63,7 +63,7 @@ exports.updateReceita = async (req, res) => {
 
 exports.deleteReceita = async (req, res) => {
   try {
-    const receitaId = req.params.id;
+    const receitaId = req.id;
 
     const receita = await Receita.findOne(receitaId);
     if (!receita) {
