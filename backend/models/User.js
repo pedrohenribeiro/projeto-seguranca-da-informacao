@@ -41,4 +41,11 @@ const User = sequelize.define('User', {
   timestamps: true 
 });
 
+User.associate = (models) => {
+  User.hasMany(models.OAuthClientApp, {
+    foreignKey: 'user_id',
+    as: 'apps',
+  });
+};
+
 module.exports = User;

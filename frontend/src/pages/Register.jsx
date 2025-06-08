@@ -169,6 +169,7 @@ export default function Register() {
           >
             <option value="user">Usuário</option>
             <option value="admin">Admin</option>
+            <option value="empresa">Empresa</option>
           </select>
 
           <button

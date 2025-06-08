@@ -32,8 +32,9 @@ export default function LoginPage() {
   };
 
   const handleCookNowLogin = () => {
-    const clientId = 'cooknow-app';
+    const clientId = '3b80c0a6e64580fe59b6f7d96cb7d35e';
     const redirectUri = `${window.location.origin}/cooknow/callback`;
+
     const oauthUrl = new URL('http://localhost:3000/oauth/authorize');
     oauthUrl.searchParams.set('response_type', 'code');
     oauthUrl.searchParams.set('client_id', clientId);
@@ -43,7 +44,7 @@ export default function LoginPage() {
 
     window.open(
       oauthUrl.toString(),
-      'CookNowLogin',
+      'OAuthLogin',
       'width=500,height=600,left=100,top=100'
     );
 
@@ -53,7 +54,7 @@ export default function LoginPage() {
     <main className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md">
         <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">Bem-vindo de volta</h1>
-        
+
         <LoginForm onLogin={handleLogin} />
 
         <div className="my-6 border-t border-gray-300"></div>
@@ -67,4 +68,4 @@ export default function LoginPage() {
       </div>
     </main>
   );
-}
+} 

@@ -6,7 +6,8 @@ import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
 import OAuthConsent from '../pages/oAuth/OAuthConsent';
-
+import OAuthClientRegister from '../pages/OAuthClientRegister';
+import PrivateRoute from '../context/PrivateRouteEmpresa';
 
 const RoutesApp = () => {
   return (
@@ -19,6 +20,14 @@ const RoutesApp = () => {
       <Route path="/perfil/editar" element={<EditarPefil />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
       <Route path="/oauth/authorize" element={<OAuthConsent />} />
+      <Route
+        path="/oauth/clientRegister"
+        element={
+          <PrivateRoute requiredRole="empresa">
+            <OAuthClientRegister />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 };

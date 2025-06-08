@@ -3,7 +3,9 @@ const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
-const sequelize = require('./config/db');
+const db = require('./models');
+const sequelize = db.sequelize;
+
 const userRoutes = require('./routes/routes');
 const oauthRoutes = require('./routes/oauthRoutes');
 
@@ -19,10 +21,15 @@ app.use(cors());
 app.use('/api', userRoutes);
 app.use('/oauth', oauthRoutes);
 
-sequelize.sync().then(() => {
-  sequelize.authenticate()
-    .then(() => console.log('Conexão com MySQL estabelecida com sucesso.'))
-    .catch(err => console.error('Erro ao conectar com o MySQL:', err));
+sequelize.authenticate()
+  .then(() => {
+    console.log('Conexão com MySQL estabelecida com sucesso.');
 
-  app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
-});
+    return sequelize.sync();
+  })
+  .then(() => {
+    app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+  })
+  .catch(err => {
+    console.error('Erro ao conectar com o MySQL:', err);
+  });

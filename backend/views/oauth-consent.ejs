@@ -78,13 +78,13 @@
 <body>
   <div class="container">
     <h1>CookNow solicita acesso</h1>
-    <p>Você está prestes a autorizar o aplicativo <strong><%= client_id %></strong> a acessar sua conta.</p>
+    <p>Você está prestes a autorizar o aplicativo <strong><%= appName %></strong> a acessar sua conta.</p>
 
     <% if (typeof error !== 'undefined') { %>
       <div class="error-message"><%= error %></div>
     <% } %>
 
-    <form method="POST" action="/oauth/authorize">
+    <form method="POST" action="/oauth/authorize/confirm">
       <input type="hidden" name="client_id" value="<%= client_id %>" />
       <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>" />
       <input type="hidden" name="state" value="<%= state %>" />
