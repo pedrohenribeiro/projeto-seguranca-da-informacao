@@ -2,11 +2,13 @@ import '../pages/style.css';
 import { useState, useEffect, React } from 'react';
 import API from '../services/api';
 import { FaSave, FaArrowLeft } from 'react-icons/fa';
+import { MdDelete } from "react-icons/md";
 
 export default function Index() {
   const [receitas, setReceitas] = useState([]);
   const [receitaSelecionada, setReceitaSelecionada] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalDeleteAberto, setModalDeleteAberto] = useState(false);
 
   useEffect(() => {
     const fetchReceitas = async () => {
@@ -23,6 +25,16 @@ export default function Index() {
     fetchReceitas();
   }, []);
 
+  const deleteReceita = async (ReceitaId) => {
+      try {
+        const response = await API.delete(`/receita/${ReceitaId}`);
+        alert('Receita deletada com sucesso!');
+        window.location.href = '/index';
+      } catch (error) {
+        console.error('Erro ao deletar receita:', error);
+      }
+    };
+
   const abrirModal = (receita) => {
     setReceitaSelecionada(receita);
     setModalAberto(true);
@@ -31,6 +43,10 @@ export default function Index() {
   const fecharModal = () => {
     setReceitaSelecionada(null);
     setModalAberto(false);
+  };
+
+  const fecharModalDelete = () => {
+    setModalDeleteAberto(false);
   };
 
   return (
@@ -54,6 +70,7 @@ export default function Index() {
         ))}
       </div>
 
+      {/* Modal da receita selecionada */}
       {modalAberto && receitaSelecionada && (
         <div className='modal-overlay' onClick={fecharModal}>
           <div className='modal-content' onClick={(e) => e.stopPropagation()}>
@@ -74,6 +91,15 @@ export default function Index() {
                 <FaArrowLeft />
                 <span>Voltar</span>
               </button>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setModalDeleteAberto(true)}
+                  className="flex items-center space-x-2 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition shadow-md"
+                >
+                  <MdDelete />
+                  <span>Deletar</span>
+                </button>
+              </div>
               <button
                 onClick={() => {
                   localStorage.setItem('receitaSelecionada', JSON.stringify(receitaSelecionada));
@@ -84,6 +110,34 @@ export default function Index() {
                 <FaSave />
                 <span>Editar</span>
               </button>
+            </div>          
+          </div>
+        </div>
+      )}
+
+      {/* Modal para deletar receita */}
+      {modalDeleteAberto && (
+        <div className='modal-overlay' onClick={fecharModalDelete}>
+          <div className='modal-content' onClick={(e) => e.stopPropagation()}>
+            <button className='modal-close' onClick={fecharModalDelete}>X</button>
+            <p className='modal-text'>Tem certeza que deseja DELETAR a receita de {receitaSelecionada.nomereceita}?</p>
+            <div className="flex justify-between items-center mt-8">
+            <button
+              className="flex items-center space-x-2 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition shadow-md"
+              onClick={fecharModalDelete}
+              >
+                <FaArrowLeft />
+                <span>Cancelar</span>
+              </button>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => deleteReceita(receitaSelecionada.id)}
+                  className="flex items-center space-x-2 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition shadow-md"
+                >
+                  <MdDelete />
+                  <span>Confirmar</span>
+                </button>
+              </div>
             </div>          
           </div>
         </div>

@@ -131,7 +131,7 @@ export default function EditarReceita() {
             type="submit"
             className="bg-azul text-white py-2 rounded hover:bg-gray-800 transition"
           >
-            Editar
+            Confirmar edição
           </button>
         </form>
       </div>
