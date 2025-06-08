@@ -37,9 +37,9 @@ exports.getAllReceitas = async (req, res) => {
 exports.updateReceita = async (req, res) => {
   try {
     const receitaId = req.id;
-    const { nomereceita, descricao, imagem, ingredientes, modopreparo, rendimento, tempopreparo } = req.body;
+    const { id, nomereceita, descricao, imagem, ingredientes, modopreparo, rendimento, tempopreparo } = req.body;
 
-    const receita = await Receita.findByPk(receitaId);
+    const receita = await Receita.findOne(receitaId);
     if (!receita) return res.status(404).json({ error: 'Receita não encontrada' });
 
     if (nomereceita) receita.nomereceita = nomereceita;
@@ -65,7 +65,7 @@ exports.deleteReceita = async (req, res) => {
   try {
     const receitaId = req.params.id;
 
-    const receita = await Receita.findByPk(receitaId);
+    const receita = await Receita.findOne(receitaId);
     if (!receita) {
       return res.status(404).json({ error: 'Receita não encontrada' });
     }
