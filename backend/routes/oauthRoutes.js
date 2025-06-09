@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { OAuthClientApp } = require('../models');
+const { OAuthClientApp, OAuthAccessGrant } = require('../models');
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const { verifyToken } = require('../middlewares/AuthMiddleware');
@@ -23,11 +23,11 @@ router.get('/authorize', async (req, res) => {
   }
 
   res.render('oauth-consent', {
+    appName: app.name, 
     client_id,
     redirect_uri,
     scope,
     state,
-    appName: app.name,
   });
 });
 
@@ -36,12 +36,26 @@ router.post('/authorize/confirm', async (req, res) => {
 
   const app = await OAuthClientApp.findOne({ where: { client_id } });
   if (!app || !app.redirect_uris.includes(redirect_uri)) {
-    return res.status(400).render('oauth-consent', { error: 'Aplicativo inválido', client_id, redirect_uri, scope, state });
+    return res.status(400).render('oauth-consent', {
+      error: 'Aplicativo inválido',
+      client_id,
+      redirect_uri,
+      scope,
+      state,
+      appName: app?.name ?? 'Aplicativo'
+    });
   }
 
   const user = await User.findOne({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).render('oauth-consent', { error: 'Credenciais inválidas', client_id, redirect_uri, scope, state });
+    return res.status(401).render('oauth-consent', {
+      error: 'Credenciais inválidas',
+      client_id,
+      redirect_uri,
+      scope,
+      state,
+      appName: app.name
+    });
   }
 
   const code = crypto.randomBytes(16).toString('hex');
@@ -52,12 +66,34 @@ router.post('/authorize/confirm', async (req, res) => {
     createdAt: Date.now(),
   });
 
+  const existingGrant = await OAuthAccessGrant.findOne({
+    where: {
+      user_id: user.id,
+      client_id: app.client_id,
+    }
+  });
+
+  if (existingGrant) {
+    await existingGrant.update({
+      scopes: scope,
+      granted_at: new Date(),
+    });
+  } else {
+    await OAuthAccessGrant.create({
+      user_id: user.id,
+      client_id: app.client_id,
+      scopes: scope,
+      granted_at: new Date(),
+    });
+  }
+
   const redirectUrl = new URL(redirect_uri);
   redirectUrl.searchParams.set('code', code);
   if (state) redirectUrl.searchParams.set('state', state);
 
   return res.redirect(redirectUrl.toString());
 });
+
 
 router.post('/token', async (req, res) => {
   const { code, client_id, client_secret, redirect_uri } = req.body;
@@ -114,6 +150,73 @@ router.post('/apps', verifyToken, async (req, res) => {
     client_secret: app.client_secret,
   });
 });
+
+router.get('/integracoes', verifyToken, async (req, res) => {
+  const { id, role } = req.user;
+
+  try {
+    if (role === 'empresa') {
+      const apps = await OAuthClientApp.findAll({ where: { user_id: id } });
+      return res.json({ tipo: 'empresa', apps });
+    } else {
+      const grants = await OAuthAccessGrant.findAll({
+        where: { user_id: id },
+        include: [{
+          model: OAuthClientApp,
+          as: 'clientApp',
+          attributes: ['name', 'client_id', 'client_secret', 'redirect_uris'],
+        }]
+      });
+
+      const integracoes = grants.map(grant => ({
+        nomeApp: grant.clientApp?.name,
+        client_id: grant.clientApp?.client_id,
+        scopes: grant.scopes,
+        concedido_em: grant.granted_at,
+      }));
+
+      return res.json({ tipo: 'usuario', integracoes });
+    }
+  } catch (err) {
+    console.error('Erro ao buscar integrações', err);
+    res.status(500).json({ error: 'Erro interno ao buscar integrações' });
+  }
+});
+
+router.delete('/integracoes/:client_id', verifyToken, async (req, res) => {
+  const { id: userId, role } = req.user;
+  const { client_id } = req.params;
+
+  try {
+    if (role === 'empresa') {
+      const app = await OAuthClientApp.findOne({
+        where: { client_id, user_id: userId },
+      });
+
+      if (!app) {
+        return res.status(404).json({ error: 'Aplicação não encontrada ou não pertence a você.' });
+      }
+
+      await app.destroy();
+      return res.json({ message: 'Aplicação excluída com sucesso.' });
+    } else {
+      const grant = await OAuthAccessGrant.findOne({
+        where: { client_id, user_id: userId },
+      });
+
+      if (!grant) {
+        return res.status(404).json({ error: 'Autorização não encontrada.' });
+      }
+
+      await grant.destroy();
+      return res.json({ message: 'Autorização revogada com sucesso.' });
+    }
+  } catch (error) {
+    console.error('Erro ao excluir integração:', error);
+    return res.status(500).json({ error: 'Erro interno ao excluir integração.' });
+  }
+});
+
 
 
 module.exports = router;

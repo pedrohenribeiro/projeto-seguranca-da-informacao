@@ -37,6 +37,13 @@ const OAuthClientApp = sequelize.define('OAuthClientApp', {
     timestamps: true,
   });
 
+  OAuthClientApp.associate = (models) => {
+  OAuthClientApp.hasMany(models.OAuthAccessGrant, {
+    foreignKey: 'client_id',
+    sourceKey: 'client_id',
+    as: 'accessGrants',
+  });
+};
 
 module.exports = OAuthClientApp;
 

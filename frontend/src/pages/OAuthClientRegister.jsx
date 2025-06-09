@@ -31,7 +31,7 @@ const OAuthClientRegister = () => {
     try {
       const response = await ApiOAuth.post('/apps', form, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // ou da forma que você salva o token
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setGeneratedCredentials(response.data);
@@ -44,61 +44,68 @@ const OAuthClientRegister = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-xl shadow-md mt-10">
-      <h2 className="text-2xl font-bold mb-6">Registrar Nova Integração OAuth</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-semibold">Nome do Aplicativo</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Ex: Meu Painel de Vendas"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-gray-900 to-black p-6">
+          <h2 className="text-3xl font-bold text-white text-center">Registrar Nova Integração</h2>
+          <p className="text-white text-center mt-2">Adicione uma nova aplicação OAuth à sua conta.</p>
         </div>
 
-        <div>
-          <label className="block font-semibold">URIs de Redirecionamento (callback)</label>
-          {form.redirect_uris.map((uri, index) => (
-            <input
-              key={index}
-              type="url"
-              name="redirect_uris"
-              placeholder="http://localhost:3001/callback"
-              value={uri}
-              onChange={(e) => handleChange(e, index)}
-              className="w-full border p-2 rounded mb-2"
-              required
-            />
-          ))}
-          <button
-            type="button"
-            onClick={addRedirectUriField}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            + Adicionar outro URI
-          </button>
-        </div>
+        <div className="p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-gray-800 font-semibold mb-1">Nome do Aplicativo</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Ex: Meu Painel de Vendas"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
-        >
-          Registrar Aplicação
-        </button>
-      </form>
+            <div>
+              <label className="block text-gray-800 font-semibold mb-1">URIs de Redirecionamento (callback)</label>
+              {form.redirect_uris.map((uri, index) => (
+                <input
+                  key={index}
+                  type="url"
+                  name="redirect_uris"
+                  placeholder="http://localhost:3001/callback"
+                  value={uri}
+                  onChange={(e) => handleChange(e, index)}
+                  className="w-full border border-gray-300 p-3 rounded-md shadow-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              ))}
+              <button
+                type="button"
+                onClick={addRedirectUriField}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                + Adicionar outro URI
+              </button>
+            </div>
 
-      {generatedCredentials && (
-        <div className="mt-6 p-4 bg-green-100 border border-green-400 rounded">
-          <h3 className="font-bold text-lg mb-2">Credenciais Geradas</h3>
-          <p><strong>Client ID:</strong> {generatedCredentials.client_id}</p>
-          <p><strong>Client Secret:</strong> {generatedCredentials.client_secret}</p>
+            <button
+              type="submit"
+              className="w-full bg-black hover:bg-gray-600 text-white py-3 rounded-md font-semibold shadow-md transition"
+            >
+              Registrar Aplicação
+            </button>
+          </form>
+
+          {generatedCredentials && (
+            <div className="p-4 bg-green-100 border border-green-400 rounded-md shadow-sm">
+              <h3 className="font-bold text-lg mb-2 text-green-800">Credenciais Geradas</h3>
+              <p className="text-sm text-gray-800"><strong>Client ID:</strong> {generatedCredentials.client_id}</p>
+              <p className="text-sm text-gray-800"><strong>Client Secret:</strong> {generatedCredentials.client_secret}</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

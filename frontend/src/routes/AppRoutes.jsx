@@ -5,9 +5,9 @@ import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
-import OAuthConsent from '../pages/oAuth/OAuthConsent';
 import OAuthClientRegister from '../pages/OAuthClientRegister';
-import PrivateRoute from '../context/PrivateRouteEmpresa';
+import MinhasIntegracoes from '../pages/MinhasIntegracoes';
+import PrivateRoute from '../context/PrivateRoute';
 
 const RoutesApp = () => {
   return (
@@ -18,8 +18,8 @@ const RoutesApp = () => {
       <Route path="/config" element={<Configuracoes />} />
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
+      <Route path="/perfil/integracoes" element={<MinhasIntegracoes />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
-      <Route path="/oauth/authorize" element={<OAuthConsent />} />
       <Route
         path="/oauth/clientRegister"
         element={

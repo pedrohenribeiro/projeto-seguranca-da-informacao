@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa';
+import { FaUserEdit, FaPlug , FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa';
 
 const formatarCPF = (cpf) => {
   if (!cpf) return 'Não informado';
@@ -108,7 +108,7 @@ export default function Configuracoes() {
 
   const navigationItems = [
     { icon: <FaUserEdit />, label: 'Editar Informações Pessoais', path: '/perfil/editar' },
-    { icon: <FaCreditCard />, label: 'Editar Informações de Pagamento', path: '/perfil/pagamento' },
+    { icon: <FaPlug />, label: 'Integrações', path: '/perfil/integracoes' },
     { icon: <FaExchangeAlt />, label: 'Fazer Portabilidade', path: '/perfil/portabilidade' },
   ];
 
