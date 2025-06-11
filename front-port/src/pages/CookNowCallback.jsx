@@ -6,35 +6,40 @@ export default function CookNowCallback() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const code = params.get('code');
-    const state = params.get('state');
+useEffect(() => {
+  const code = params.get('code');
+  const returnedState = params.get('state');
+  const expectedState = sessionStorage.getItem('oauth_state');
 
-    const exchangeCodeForToken = async () => {
-      try {
-        const res = await axios.post('http://localhost:3000/oauth/token', {
-          code,
-          client_id: '3b80c0a6e64580fe59b6f7d96cb7d35e',
-          client_secret: 'f3f0c8adecf06902fa09b220d157bac93d9c4a315af15ce21cf3511d7827cc0b', 
-          redirect_uri: `${window.location.origin}/cooknow/callback`,
-          grant_type: 'authorization_code',
-        });
+  if (!code || returnedState !== expectedState) {
+    alert('Tentativa de login inválida ou possivelmente forjada.');
+    window.close();
+    return;
+  }
 
-        const { access_token } = res.data;
+  const exchangeCodeForToken = async () => {
+    try {
+      const res = await axios.post('http://localhost:3000/oauth/token', {
+        code,
+        client_id: 'b2667524e787b80ead554eaa4cf9850e',
+        client_secret: 'e28998490e069a039862ccf42be4afa3ae28c162a5b79ce457443bdd15f1605f',
+        redirect_uri: `${window.location.origin}/cooknow/callback`,
+        grant_type: 'authorization_code',
+      });
 
-        window.opener.postMessage({ token: access_token }, window.location.origin);
-        window.close();
-      } catch (err) {
-        console.error('Erro ao trocar code por token:', err.response?.data || err.message);
-        alert('Erro ao autenticar com CookNow');
-        window.close();
-      }
-    };
+      const { access_token } = res.data;
 
-    if (code && state === 'xyz123') {
-      exchangeCodeForToken();
+      window.opener.postMessage({ token: access_token }, window.location.origin);
+      window.close();
+    } catch (err) {
+      console.error('Erro ao trocar code por token:', err.response?.data || err.message);
+      alert('Erro ao autenticar com CookNow');
+      window.close();
     }
-  }, [params]);
+  };
+
+  exchangeCodeForToken();
+}, [params]);
 
   return <p>Autenticando com CookNow...</p>;
 }

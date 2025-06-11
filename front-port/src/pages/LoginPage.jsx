@@ -32,23 +32,26 @@ export default function LoginPage() {
   };
 
   const handleCookNowLogin = () => {
-    const clientId = '3b80c0a6e64580fe59b6f7d96cb7d35e';
-    const redirectUri = `${window.location.origin}/cooknow/callback`;
+  const clientId = 'b2667524e787b80ead554eaa4cf9850e';
+  const redirectUri = `${window.location.origin}/cooknow/callback`;
 
-    const oauthUrl = new URL('http://localhost:3000/oauth/authorize');
-    oauthUrl.searchParams.set('response_type', 'code');
-    oauthUrl.searchParams.set('client_id', clientId);
-    oauthUrl.searchParams.set('redirect_uri', redirectUri);
-    oauthUrl.searchParams.set('scope', 'read');
-    oauthUrl.searchParams.set('state', 'xyz123');
+  const state = crypto.randomUUID();
+  sessionStorage.setItem('oauth_state', state);
 
-    window.open(
-      oauthUrl.toString(),
-      'OAuthLogin',
-      'width=500,height=600,left=100,top=100'
-    );
+  const oauthUrl = new URL('http://localhost:3000/oauth/authorize');
+  oauthUrl.searchParams.set('response_type', 'code');
+  oauthUrl.searchParams.set('client_id', clientId);
+  oauthUrl.searchParams.set('redirect_uri', redirectUri);
+  oauthUrl.searchParams.set('scope', 'read');
+  oauthUrl.searchParams.set('state', state);
 
-  };
+  window.open(
+    oauthUrl.toString(),
+    'OAuthLogin',
+    'width=500,height=600,left=100,top=100'
+  );
+};
+
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-100">
