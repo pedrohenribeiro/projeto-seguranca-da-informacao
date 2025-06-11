@@ -153,25 +153,12 @@ exports.updateMe = async (req, res) => {
   }
 };
 
-exports.deleteMe = async (req, res) => {
+/*exports.deleteMe = async (req, res) => {
   const userId = req.user.id;
   let t;
+
   try {
     t = await sequelize.transaction();
-  try {
-    const userId = req.user.id;
-
-    const user = await User.findByPk(userId);
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
-
-    await user.destroy();
-
-    res.json({ message: 'Usuário deletado com sucesso' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
 
     const user = await User.findByPk(userId, { transaction: t });
     if (!user) {
@@ -187,9 +174,26 @@ exports.deleteMe = async (req, res) => {
 
     await t.commit();
     res.json({ message: 'Conta removida e marcada como inativa.' });
+
   } catch (err) {
     if (t) await t.rollback();
     console.error('Erro em deleteMe:', err);
     res.status(500).json({ error: 'Erro ao apagar conta' });
+  }
+};*/
+
+
+exports.deleteMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    await user.destroy();
+
+    res.json({ message: 'Usuário deletado com sucesso' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
