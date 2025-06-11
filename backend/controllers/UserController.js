@@ -1,12 +1,14 @@
-// const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const db = require('../models');
+const sequelize = db.sequelize;
+const UserInativo = require('../models/UserInativo');
 const User = db.User;
 const UserTerm = db.UserTerm;
 const Term = db.Term; // import do model Term
+
 
 exports.register = async (req, res) => {
   try {
@@ -147,5 +149,32 @@ exports.updateMe = async (req, res) => {
     res.json({ message: 'Usuário atualizado com sucesso', user });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteMe = async (req, res) => {
+  const userId = req.user.id;
+  let t;
+  try {
+    t = await sequelize.transaction();
+
+    const user = await User.findByPk(userId, { transaction: t });
+    if (!user) {
+      await t.rollback();
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    // 1) Marca como inativo no Mongo
+    await UserInativo.create({ userId });
+
+    // 2) Remove do MySQL (cascata em Favoritos e Endereco)
+    await user.destroy({ transaction: t });
+
+    await t.commit();
+    res.json({ message: 'Conta removida e marcada como inativa.' });
+  } catch (err) {
+    if (t) await t.rollback();
+    console.error('Erro em deleteMe:', err);
+    res.status(500).json({ error: 'Erro ao apagar conta' });
   }
 };

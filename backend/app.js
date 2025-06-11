@@ -3,7 +3,7 @@ const app = express();
 const sequelize = require('./config/db');
 const userRoutes = require('./routes/routes');
 const cors = require('cors');
-
+require('./config/mongo');
 require('dotenv').config();
 
 app.use(express.json());

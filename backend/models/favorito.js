@@ -1,23 +1,19 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+module.exports = (sequelize, DataTypes) => {
+  const Favorito = sequelize.define('Favorito', {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+    },
+    receitaId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+    }
+  }, {
+    tableName: 'Favoritos',
+    timestamps: true,
+  });
 
-const Favorito = sequelize.define('Favorito', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  receitaId:{
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  }
-}, {
-  tableName: 'Favoritos', 
-  timestamps: true 
-});
-
-module.exports = Favorito;
+  return Favorito;
+};

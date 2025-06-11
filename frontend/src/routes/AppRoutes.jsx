@@ -7,7 +7,7 @@ import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
 import { TermosServico } from '../pages/TermosServico'; 
 import PainelTermos from '../pages/PainelTermos'; 
-
+import DeleteAccount from '../pages/DeleteAccount';
 
 const RoutesApp = () => {
   return (
@@ -18,6 +18,7 @@ const RoutesApp = () => {
       <Route path="/config" element={<Configuracoes />} />
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
+      <Route path="/perfil/excluir" element={<DeleteAccount />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
       <Route path="/painel-termos" element={<PainelTermos />} />
       <Route path="/perfil/termos-servico" element={<TermosServico />} />

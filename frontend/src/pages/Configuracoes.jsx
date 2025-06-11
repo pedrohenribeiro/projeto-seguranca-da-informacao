@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList } from 'react-icons/fa';
+import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash } from 'react-icons/fa';
 
 const formatarCPF = (cpf) => {
   if (!cpf) return 'Não informado';
@@ -169,6 +169,14 @@ export default function Configuracoes() {
                 >
                   <span className="text-gray-900 text-xl"><FaCreditCard /></span>
                   <span className="text-gray-800 font-medium">Editar Informações de Pagamento</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/perfil/excluir')}
+                  className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                >
+                  <span className="text-gray-900 text-xl"><FaTrash /></span>
+                  <span className="text-gray-800 font-medium">Excluir Conta</span>
                 </button>
 
                 {/* Botão apenas para admin */}
