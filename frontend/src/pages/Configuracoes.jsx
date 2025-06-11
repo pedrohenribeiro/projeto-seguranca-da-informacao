@@ -109,7 +109,6 @@ export default function Configuracoes() {
   const navigationItems = [
     { icon: <FaUserEdit />, label: 'Editar Informações Pessoais', path: '/perfil/editar' },
     { icon: <FaPlug />, label: 'Integrações', path: '/perfil/integracoes' },
-    { icon: <FaExchangeAlt />, label: 'Fazer Portabilidade', path: '/perfil/portabilidade' },
   ];
 
   return (
