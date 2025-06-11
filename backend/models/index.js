@@ -2,54 +2,63 @@
 
 const fs = require('fs');
 const path = require('path');
+const sequelize = require('../config/db');
 const Sequelize = require('sequelize');
-const process = require('process');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+const basename = path.basename(__filename);
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
+fs.readdirSync(__dirname)
+  .filter(file => file !== basename && file.endsWith('.js'))
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const modelModule = require(path.join(__dirname, file));
+    let model;
+
+
+    if (typeof modelModule === 'function' && modelModule.prototype instanceof Sequelize.Model) {
+      model = modelModule;
+      model.init(model.rawAttributes, {
+        sequelize,
+        modelName: model.name,
+        tableName: model.tableName || undefined,
+        timestamps: model.options?.timestamps,
+      });
+    } else {
+      model = modelModule(sequelize, Sequelize.DataTypes);
+    }
+
     db[model.name] = model;
   });
 
-  // Associações
-const { User, Receita, Favorito } = db;
+const { User, Term, UserTerm, Endereco, Receita, Favorito } = db;
 
-if (User && Receita && Favorito) {
-  User.hasMany(Favorito, { foreignKey: 'userId' });
-  Receita.hasMany(Favorito, { foreignKey: 'receitaId' });
+if (User && Term && UserTerm) {
+  User.belongsToMany(Term, { through: UserTerm, foreignKey: 'user_id', otherKey: 'term_id', as: 'termsAccepted' });
+  Term.belongsToMany(User, { through: UserTerm, foreignKey: 'term_id', otherKey: 'user_id', as: 'usersAccepted' });
+}
 
+if (User && Endereco) {
+  User.hasOne(Endereco, { foreignKey: 'userId', onDelete: 'CASCADE', hooks: true });
+  Endereco.belongsTo(User, { foreignKey: 'userId' });
+}
+
+if (User && Favorito) {
+  User.hasMany(Favorito, { foreignKey: 'userId', onDelete: 'CASCADE', hooks: true });
   Favorito.belongsTo(User, { foreignKey: 'userId' });
+}
+
+if (Receita && Favorito) {
+  Receita.hasMany(Favorito, { foreignKey: 'receitaId', onDelete: 'CASCADE', hooks: true });
   Favorito.belongsTo(Receita, { foreignKey: 'receitaId' });
 }
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+Object.keys(db).forEach(key => {
+  if (typeof db[key].associate === 'function') {
+    db[key].associate(db);
   }
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
+ db.sequelize = sequelize;
+ db.Sequelize = Sequelize;
 
 module.exports = db;
