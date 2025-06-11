@@ -73,22 +73,38 @@ exports.getMe = async (req, res) => {
 exports.updateMe = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { username, email, telefone, password } = req.body;
+    const { nome, email, telefone, cpf } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    if (username) user.username = username;
+    if (nome) user.nome = nome;
     if (email) user.email = email;
     if (telefone) user.telefone = telefone;
-    if (password) {
+    if (cpf) user.cpf = cpf;
+    /*if (password) {
       const hashed = await bcrypt.hash(password, 10);
       user.password = hashed;
-    }
+    }*/
 
     await user.save();
 
     res.json({ message: 'Usuário atualizado com sucesso', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+
+    await user.destroy();
+
+    res.json({ message: 'Usuário deletado com sucesso' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
