@@ -164,10 +164,8 @@ exports.deleteMe = async (req, res) => {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // 1) Marca como inativo no Mongo
     await UserInativo.create({ userId });
 
-    // 2) Remove do MySQL (cascata em Favoritos e Endereco)
     await user.destroy({ transaction: t });
 
     await t.commit();
