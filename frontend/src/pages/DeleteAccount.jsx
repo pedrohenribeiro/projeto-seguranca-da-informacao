@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 export default function DeleteAccount() {
   const [loading, setLoading] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+      logout();
+      localStorage.removeItem('token');
+      navigate('/login');
+    };
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
@@ -14,10 +24,7 @@ export default function DeleteAccount() {
       setLoading(true);
       await API.delete('/user');
       alert('Conta deletada com sucesso.');
-      // Remove o token antes de forçar o redirecionamento
-      localStorage.removeItem('token');
-      // Força o navegador a carregar a rota de login diretamente
-      window.location.replace('/login');
+      handleLogout();
     } catch (err) {
       console.error('Erro ao deletar conta:', err.response?.data || err.message);
       alert('Falha ao deletar conta. Tente novamente mais tarde.');
