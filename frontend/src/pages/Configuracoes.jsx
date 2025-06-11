@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash } from 'react-icons/fa';
-import { FaUserEdit, FaTrashAlt, FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa';
+import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash, FaTrashAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
 const formatarCPF = (cpf) => {
@@ -103,10 +102,6 @@ export default function Configuracoes() {
       });
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
   const navigationItems = [
     { icon: <FaUserEdit />, label: 'Editar Informações Pessoais', path: '/perfil/editar' },
     { icon: <FaTrashAlt />, label: 'Deletar Informações Pessoais', onClick: () => setIsModalOpen(true) },  
@@ -212,8 +207,6 @@ export default function Configuracoes() {
                 {user.role === 'admin' && (
                   <button
                     onClick={() => navigate('/painel-termos')}
-                    key={item.label}
-                    onClick={item.onClick ? item.onClick : () => navigate(item.path)}
                     className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
                   >
                     <span className="text-gray-900 text-xl"><FaClipboardList /></span>

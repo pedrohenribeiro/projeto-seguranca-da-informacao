@@ -60,20 +60,21 @@ const verificarTermos = async () => {
     verificarTermos();
   }, []);
 
-  // Função para fechar o alerta e limpar localStorage
-  const fecharAlerta = () => {
-    setAlertaTermos(false);
-    localStorage.removeItem('alertaNovosTermos');
-    localStorage.removeItem('mensagemTermos');
-  const deleteReceita = async (ReceitaId) => {
-      try {
-        const response = await API.delete(`/receita/${ReceitaId}`);
-        alert('Receita deletada com sucesso!');
-        window.location.href = '/index';
-      } catch (error) {
-        console.error('Erro ao deletar receita:', error);
-      }
-    };
+const deleteReceita = async (ReceitaId) => {
+  try {
+    const response = await API.delete(`/receita/${ReceitaId}`);
+    alert('Receita deletada com sucesso!');
+    window.location.href = '/index';
+  } catch (error) {
+    console.error('Erro ao deletar receita:', error);
+  }
+};
+
+const fecharAlerta = () => {
+  setAlertaTermos(false);
+  localStorage.removeItem('alertaNovosTermos');
+  localStorage.removeItem('mensagemTermos');
+};
 
   const abrirModal = (receita) => {
     setReceitaSelecionada(receita);
