@@ -6,6 +6,7 @@ const userController = require('../controllers/UserController');
 const enderecoController = require('../controllers/EnderecoController');
 const { verifyToken } = require('../middlewares/AuthMiddleware');
 const receitaController = require('../controllers/ReceitaController');
+const TermController = require('../controllers/TermController');
 
 router.post(
   '/register',
@@ -24,6 +25,12 @@ router.post('/login', userController.login);
 router.get('/users', verifyToken, userController.getAllUsers);
 router.get('/user', verifyToken, userController.getMe);
 router.put('/user', verifyToken, userController.updateMe);
+router.get('/terms', TermController.getAllTerms);
+router.post('/terms', TermController.createTerm);
+router.delete('/terms/:id', TermController.deleteTerm);
+router.put('/terms/:id', TermController.atualizarTermo);
+
+
 
 router.post(
   '/address',
@@ -55,6 +62,10 @@ router.put(
 router.delete('/address', verifyToken, enderecoController.deleteMyAddress);
 
 router.post('/receita', verifyToken, receitaController.registerReceita);
+router.get('/user/terms', verifyToken, TermController.getUserTerms);
+router.post('/user/terms/:termId/accept', verifyToken, TermController.acceptTerm);
+router.delete('/user/terms/:termId/unaccept', verifyToken, TermController.unacceptTerm);
+router.get('/user/terms-status', verifyToken, TermController.getTermsWithUserStatus);
 router.get('/receitas', verifyToken, receitaController.getAllReceitas);
 router.put('/receita/:id', verifyToken, receitaController.updateReceita);
 router.delete('/receita/:id', verifyToken, receitaController.deleteReceita);

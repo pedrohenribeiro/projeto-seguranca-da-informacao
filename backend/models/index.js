@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
@@ -27,29 +26,50 @@ fs
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const modelModule = require(path.join(__dirname, file));
+
+    let model;
+
+    // Se o model exportar uma classe que herda de Sequelize.Model
+    if (typeof modelModule === 'function' && modelModule.prototype instanceof Sequelize.Model) {
+      model = modelModule; // vai usar init depois
+      model.init(model.rawAttributes, {
+        sequelize,
+        modelName: model.name,
+        tableName: model.tableName || undefined,
+        timestamps: model.options?.timestamps,
+      });
+    }
+    // Se for uma factory function tradicional (define)
+    else if (typeof modelModule === 'function') {
+      model = modelModule(sequelize, Sequelize.DataTypes);
+    } else {
+      model = modelModule;
+    }
+
     db[model.name] = model;
   });
 
-  // Associações
-const { User, Receita, Favorito } = db;
+// Associações
+const { User, Term, UserTerm } = db;
 
-if (User && Receita && Favorito) {
-  User.hasMany(Favorito, { foreignKey: 'userId' });
-  Receita.hasMany(Favorito, { foreignKey: 'receitaId' });
+if (User && Term && UserTerm) {
+  User.belongsToMany(Term, {
+    through: UserTerm,
+    foreignKey: 'user_id',
+    otherKey: 'term_id',
+    as: 'termsAccepted'
+  });
 
-  Favorito.belongsTo(User, { foreignKey: 'userId' });
-  Favorito.belongsTo(Receita, { foreignKey: 'receitaId' });
+  Term.belongsToMany(User, {
+    through: UserTerm,
+    foreignKey: 'term_id',
+    otherKey: 'user_id',
+    as: 'usersAccepted'
+  });
 }
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
 
 module.exports = db;

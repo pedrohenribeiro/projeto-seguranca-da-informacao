@@ -5,6 +5,9 @@ import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
+import { TermosServico } from '../pages/TermosServico'; 
+import PainelTermos from '../pages/PainelTermos'; 
+
 
 const RoutesApp = () => {
   return (
@@ -16,6 +19,8 @@ const RoutesApp = () => {
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
+      <Route path="/painel-termos" element={<PainelTermos />} />
+      <Route path="/perfil/termos-servico" element={<TermosServico />} />
     </Routes>
   );
 };
