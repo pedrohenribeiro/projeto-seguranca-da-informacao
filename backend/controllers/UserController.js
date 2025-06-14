@@ -153,7 +153,7 @@ exports.updateMe = async (req, res) => {
   }
 };
 
-/*exports.deleteMe = async (req, res) => {
+exports.deleteMe = async (req, res) => {
   const userId = req.user.id;
   let t;
 
@@ -180,10 +180,10 @@ exports.updateMe = async (req, res) => {
     console.error('Erro em deleteMe:', err);
     res.status(500).json({ error: 'Erro ao apagar conta' });
   }
-};*/
+};
 
 
-exports.deleteMe = async (req, res) => {
+exports.deleteSoftMe = async (req, res) => {
   try {
     const userId = req.user.id;
 

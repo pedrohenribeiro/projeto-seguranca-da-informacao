@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash, FaTrashAlt } from 'react-icons/fa';
+import { FaUserEdit, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash, FaTrashAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { TiUserDelete } from "react-icons/ti";
 
 const formatarCPF = (cpf) => {
   if (!cpf) return 'Não informado';
@@ -116,7 +117,7 @@ export default function Configuracoes() {
 
   const handleDelete = async () => {  
       try {
-        await API.delete('/user');
+        await API.delete('/delete-soft');
         alert('Seu usuário foi deletado com sucesso!');
         handleLogout();
       } catch (err) {
@@ -188,11 +189,11 @@ export default function Configuracoes() {
                 </button>
 
                 <button
-                  onClick={() => navigate('/perfil/pagamento')}
+                  onClick={() => setIsModalOpen(true)}
                   className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
                 >
-                  <span className="text-gray-900 text-xl"><FaCreditCard /></span>
-                  <span className="text-gray-800 font-medium">Editar Informações de Pagamento</span>
+                  <span className="text-gray-900 text-xl"><TiUserDelete /></span>
+                  <span className="text-gray-800 font-medium">Deletar informações pessoais</span>
                 </button>
 
                 <button

@@ -26,6 +26,7 @@ router.get('/users', verifyToken, userController.getAllUsers);
 router.get('/user', verifyToken, userController.getMe);
 router.put('/user', verifyToken, userController.updateMe);
 router.delete('/user', verifyToken, userController.deleteMe);
+router.delete('/delete-soft', verifyToken, userController.deleteSoftMe);
 
 router.get('/terms', TermController.getAllTerms);
 router.post('/terms', TermController.createTerm);
