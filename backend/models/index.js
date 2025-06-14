@@ -9,7 +9,6 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
-
 fs.readdirSync(__dirname)
   .filter(file => {
     return (
@@ -22,7 +21,7 @@ fs.readdirSync(__dirname)
     const modelPath = path.join(__dirname, file);
     const modelExport = require(modelPath);
 
-    const model = modelExport;
+    const model = modelExport(sequelize, Sequelize.DataTypes);
 
     db[model.name] = model;
   });

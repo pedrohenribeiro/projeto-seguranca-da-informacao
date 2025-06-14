@@ -1,49 +1,23 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-
-const OAuthClientApp = sequelize.define('OAuthClientApp', {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    client_id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    client_secret: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    redirect_uris: {
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Users',  // nome da tabela no banco
-        key: 'id',
-      },
-    },
+module.exports = (sequelize, DataTypes) => {
+  const OAuthClientApp = sequelize.define('OAuthClientApp', {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    client_id: { type: DataTypes.STRING, allowNull: false, unique: true },
+    client_secret: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false },
+    redirect_uris: { type: DataTypes.JSON, allowNull: false },
+    user_id: { type: DataTypes.INTEGER, allowNull: false }
   }, {
     tableName: 'OAuthClientApps',
-    timestamps: true,
+    timestamps: true
   });
 
   OAuthClientApp.associate = (models) => {
-  OAuthClientApp.hasMany(models.OAuthAccessGrant, {
-    foreignKey: 'client_id',
-    sourceKey: 'client_id',
-    as: 'accessGrants',
-  });
+    OAuthClientApp.hasMany(models.OAuthAccessGrant, {
+      foreignKey: 'client_id',
+      sourceKey: 'client_id',
+      as: 'accessGrants'
+    });
+  };
+
+  return OAuthClientApp;
 };
-
-module.exports = OAuthClientApp;
-

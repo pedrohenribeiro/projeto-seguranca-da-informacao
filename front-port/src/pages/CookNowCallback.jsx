@@ -21,8 +21,8 @@ useEffect(() => {
     try {
       const res = await axios.post('http://localhost:3000/oauth/token', {
         code,
-        client_id: 'b2667524e787b80ead554eaa4cf9850e',
-        client_secret: 'e28998490e069a039862ccf42be4afa3ae28c162a5b79ce457443bdd15f1605f',
+        client_id: '0f007095b259aeaef9149aa7e9d61dbb',
+        client_secret: '1e577c13fd9320b2576ca4e7bdb1199ef2e3243cdbbc690a471462190c4ded0e',
         redirect_uri: `${window.location.origin}/cooknow/callback`,
         grant_type: 'authorization_code',
       });

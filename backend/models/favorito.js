@@ -15,5 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
   });
 
+  Favorito.associate = (models) => {
+    Favorito.belongsTo(models.User, { foreignKey: 'userId' });
+    Favorito.belongsTo(models.Receita, { foreignKey: 'receitaId' });
+  };
+
   return Favorito;
 };

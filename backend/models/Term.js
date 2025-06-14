@@ -1,6 +1,5 @@
-// Term.js
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('Term', {
+  const Term = sequelize.define('Term', {
     nome: {
       type: DataTypes.STRING,
       allowNull: false
@@ -17,4 +16,15 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'terms',
     timestamps: true
   });
+
+  Term.associate = (models) => {
+    Term.belongsToMany(models.User, {
+      through: models.UserTerm,
+      foreignKey: 'term_id',
+      otherKey: 'user_id',
+      as: 'usersAccepted'
+    });
+  };
+
+  return Term;
 };
