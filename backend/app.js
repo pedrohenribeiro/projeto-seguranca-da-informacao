@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+require('./config/mongo');
 require('dotenv').config();
 
 const db = require('./models');

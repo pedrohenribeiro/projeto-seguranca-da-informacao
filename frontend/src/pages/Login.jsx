@@ -21,6 +21,16 @@ export default function Login() {
     try {
       const res = await API.post('/login', form);
       localStorage.setItem('token', res.data.token);
+
+      // Guarda o alerta de termos novos, se existir
+      if (res.data.alertaNovosTermos) {
+        localStorage.setItem('alertaNovosTermos', 'true');
+        localStorage.setItem('mensagemTermos', res.data.mensagem);
+      } else {
+        localStorage.removeItem('alertaNovosTermos');
+        localStorage.removeItem('mensagemTermos');
+      }
+
       login();
       navigate('/index');
     } catch (err) {

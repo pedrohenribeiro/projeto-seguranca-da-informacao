@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
-import { FaUserEdit, FaPlug , FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa';
+import { FaUserEdit, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash, FaTrashAlt, FaPlug , FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
+import { TiUserDelete } from "react-icons/ti";
 
 const formatarCPF = (cpf) => {
   if (!cpf) return 'Não informado';
-  cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
-  if (cpf.length > 11) cpf = cpf.slice(0, 11); // Limita a 11 dígitos
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length > 11) cpf = cpf.slice(0, 11);
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
 const formatarTelefone = (telefone) => {
   if (!telefone) return 'Não informado';
-  telefone = telefone.replace(/\D/g, ''); // Remove caracteres não numéricos
-  if (telefone.length > 11) telefone = telefone.slice(0, 11); // Limita a 11 dígitos
+  telefone = telefone.replace(/\D/g, '');
+  if (telefone.length > 11) telefone = telefone.slice(0, 11);
   if (telefone.length === 10) {
     return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   } else if (telefone.length === 11) {
@@ -22,11 +24,9 @@ const formatarTelefone = (telefone) => {
   return telefone;
 };
 
-
 const validarCPF = (cpf) => {
-  cpf = cpf.replace(/\D/g, ''); 
+  cpf = cpf.replace(/\D/g, '');
   if (cpf.length !== 11) return false;
-
   if (/^(\d)\1+$/.test(cpf)) return false;
 
   let soma = 0;
@@ -48,10 +48,7 @@ const validarCPF = (cpf) => {
   return true;
 };
 
-const validarEmail = (email) => {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
-};
+const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const validarTelefone = (telefone) => {
   telefone = telefone.replace(/\D/g, '');
@@ -63,6 +60,12 @@ export default function Configuracoes() {
   const [isLoading, setIsLoading] = useState(true);
   const [erros, setErros] = useState({ cpf: '', email: '', telefone: '' });
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { logout } = useAuth();
+
+  const fecharModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -92,7 +95,6 @@ export default function Configuracoes() {
           }
         }
         setErros(novosErros);
-
         setIsLoading(false);
       })
       .catch((err) => {
@@ -101,15 +103,28 @@ export default function Configuracoes() {
       });
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-
   const navigationItems = [
     { icon: <FaUserEdit />, label: 'Editar Informações Pessoais', path: '/perfil/editar' },
     { icon: <FaPlug />, label: 'Integrações', path: '/perfil/integracoes' },
+    { icon: <FaTrashAlt />, label: 'Deletar Informações Pessoais', onClick: () => setIsModalOpen(true) },  
+    { icon: <FaExchangeAlt />, label: 'Fazer Portabilidade', path: '/perfil/portabilidade' },
   ];
+  
+    const handleLogout = () => {
+      logout();
+      localStorage.removeItem('token');
+      navigate('/login');
+    };
+
+  const handleDelete = async () => {  
+      try {
+        await API.delete('/delete-soft');
+        alert('Seu usuário foi deletado com sucesso!');
+        handleLogout();
+      } catch (err) {
+        alert('Erro ao cadastrar: ' + (err.response?.data?.error || err.message));
+      }
+    };
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -134,9 +149,6 @@ export default function Configuracoes() {
                 <div className="bg-gray-50 p-5 rounded-xl shadow-sm">
                   <p className="text-sm font-semibold text-gray-500 uppercase mb-1">Nome</p>
                   <p className="text-lg text-gray-800">{user.nome || 'Não informado'}</p>
-                  {erros.email && (
-                    <span className="text-red-500 text-sm mt-1 block">{erros.nome}</span>
-                  )}
                 </div>
 
                 <div className="bg-gray-50 p-5 rounded-xl shadow-sm">
@@ -165,25 +177,66 @@ export default function Configuracoes() {
               </div>
             </div>
 
-
-            {/* Navigation Buttons */}
+            {/* Botões de navegação */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Gerenciar Conta</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {navigationItems.map((item) => (
+                <button
+                  onClick={() => navigate('/perfil/editar')}
+                  className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                >
+                  <span className="text-gray-900 text-xl"><FaUserEdit /></span>
+                  <span className="text-gray-800 font-medium">Editar Informações Pessoais</span>
+                </button>
+
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                >
+                  <span className="text-gray-900 text-xl"><TiUserDelete /></span>
+                  <span className="text-gray-800 font-medium">Deletar informações pessoais</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/perfil/excluir')}
+                  className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                >
+                  <span className="text-gray-900 text-xl"><FaTrash /></span>
+                  <span className="text-gray-800 font-medium">Excluir Conta</span>
+                </button>
+
+                {/* Botão apenas para admin */}
+                {user.role === 'admin' && (
                   <button
-                    key={item.label}
-                    onClick={() => navigate(item.path)}
+                    onClick={() => navigate('/painel-termos')}
                     className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
                   >
-                    <span className="text-gray-900 text-xl">{item.icon}</span>
-                    <span className="text-gray-800 font-medium">{item.label}</span>
+                    <span className="text-gray-900 text-xl"><FaClipboardList /></span>
+                    <span className="text-gray-800 font-medium">Painel de Termos e Serviços</span>
                   </button>
-                ))}
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4 sm:col-span-2">
+                  <button
+                    onClick={() => navigate('/perfil/portabilidade')}
+                    className="flex-1 flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                  >
+                    <span className="text-gray-900 text-xl"><FaExchangeAlt /></span>
+                    <span className="text-gray-800 font-medium">Fazer Portabilidade</span>
+                  </button>
+
+                  <button
+                    onClick={() => navigate('/perfil/termos-servico')}
+                    className="flex-1 flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
+                  >
+                    <span className="text-gray-900 text-xl"><FaExchangeAlt /></span>
+                    <span className="text-gray-800 font-medium">Termos de Serviço</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Logout Button */}
+            {/* Botão de logout */}
             <div className="flex justify-end">
               <button
                 onClick={handleLogout}
@@ -198,6 +251,25 @@ export default function Configuracoes() {
           <p className="text-center text-gray-500 p-8">Não foi possível carregar as informações do usuário.</p>
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button onClick={fecharModal} className="modal-close">✖</button>
+            <h2 className="modal-title">Confirmar Exclusão</h2>
+            <p className="modal-text">
+              Tem certeza de que deseja deletar suas informações pessoais? Esta ação não poderá ser desfeita.
+            </p>
+            <div className="flex justify-end gap-4 mt-4">
+              <button onClick={fecharModal} className="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
+              <button 
+                className="bg-red-600 text-white px-4 py-2 rounded"
+                onClick={handleDelete}>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -138,6 +138,8 @@ export default function EditarInformacoesPessoais() {
       });
   }, []);
 
+  console.log('formData:', formData);
+
   const handleCepChange = async (e) => {
     let cep = e.target.value.replace(/\D/g, '');
     cep = formatarCEP(cep);
@@ -170,6 +172,8 @@ export default function EditarInformacoesPessoais() {
 
     if (name === 'cpf') {
       formattedValue = formatarCPF(value);
+    } else if (name === 'nome') {
+      formattedValue = value;
     } else if (name === 'telefone') {
       formattedValue = formatarTelefone(value);
     } else if (name === 'cep') {
@@ -250,7 +254,7 @@ export default function EditarInformacoesPessoais() {
 
     try {
         await API.put('/user', {
-        username: formData.username,
+        nome: formData.nome,
         email: formData.email,
         telefone: telefoneLimpo,
         cpf: cpfLimpo,
@@ -258,7 +262,7 @@ export default function EditarInformacoesPessoais() {
         console.log('User data updated successfully');
 
         if (hasAddressData) {
-        await API.post('/address', {
+        await API.put('/address', {
             cep: cepLimpo,
             endereco: formData.endereco,
             bairro: formData.bairro,
@@ -301,7 +305,7 @@ export default function EditarInformacoesPessoais() {
                   <label className="block text-gray-700 font-medium mb-2">Nome</label>
                   <input
                     type="text"
-                    name="username"
+                    name="nome"
                     value={formData.nome}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-900 transition"

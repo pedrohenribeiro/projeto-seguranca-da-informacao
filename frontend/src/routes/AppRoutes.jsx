@@ -8,6 +8,10 @@ import RegisterReceita from '../pages/RegisterReceita';
 import OAuthClientRegister from '../pages/OAuthClientRegister';
 import MinhasIntegracoes from '../pages/MinhasIntegracoes';
 import PrivateRoute from '../context/PrivateRoute';
+import { TermosServico } from '../pages/TermosServico'; 
+import PainelTermos from '../pages/PainelTermos'; 
+import DeleteAccount from '../pages/DeleteAccount';
+import EditarReceita from '../pages/EditarReceita';
 
 const RoutesApp = () => {
   return (
@@ -28,6 +32,11 @@ const RoutesApp = () => {
           </PrivateRoute>
         }
       />
+      <Route path="/perfil/excluir" element={<DeleteAccount />} />
+      <Route path="/registerReceita" element={<RegisterReceita />} />
+      <Route path="/painel-termos" element={<PainelTermos />} />
+      <Route path="/perfil/termos-servico" element={<TermosServico />} />
+      <Route path="/editarReceita" element={<EditarReceita />} />
     </Routes>
   );
 };

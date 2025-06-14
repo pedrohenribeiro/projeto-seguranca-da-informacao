@@ -27,19 +27,24 @@ module.exports = {
   },
 
   async updateMyAddress(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    try {
-      const address = await Address.findOne({ where: { userId: req.user.id } });
-      if (!address) return res.status(404).json({ error: 'Endereço não encontrado' });
+  try {
+    const { id: userId } = req.user;
+    let address = await Address.findOne({ where: { userId } });
 
+    if (!address) {
+      address = await Address.create({ ...req.body, userId });
+    } else {
       await address.update(req.body);
-      res.json(address);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
     }
-  },
+
+    res.json(address);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+},
 
   async deleteMyAddress(req, res) {
     try {
