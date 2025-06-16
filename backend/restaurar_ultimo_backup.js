@@ -1,4 +1,4 @@
-// restore_last_backup.js
+// restaurar_ultimo_backup.js
 const fs = require('fs');
 const path = require('path');
 const { MongoClient } = require('mongodb');
@@ -9,8 +9,8 @@ require('dotenv').config();
   const BACKUP_DIR = path.join(__dirname, 'backups-mysql');
   const files = fs.readdirSync(BACKUP_DIR)
     .filter(f => f.endsWith('.sql'))
-    .map(f => ({ name: f, time: fs.statSync(path.join(BACKUP_DIR, f)).mtimeMs }))
-    .sort((a, b) => b.time - a.time);
+    .map(f => ({ name: f, mtime: fs.statSync(path.join(BACKUP_DIR, f)).mtimeMs }))
+    .sort((a, b) => b.mtime - a.mtime);
 
   if (!files.length) {
     console.error('Nenhum backup .sql encontrado em', BACKUP_DIR);
@@ -20,50 +20,60 @@ require('dotenv').config();
   const latestFile = path.join(BACKUP_DIR, files[0].name);
   console.log('Usando dump:', files[0].name);
 
-  // Conecta no Mongo e pega inativos
   const mongoClient = new MongoClient(process.env.MONGO_URI);
   await mongoClient.connect();
-  const docs = await mongoClient.db().collection('usuarioInativos')
+  const docs = await mongoClient.db()
+    .collection('usuarioInativos')
     .find({}, { projection: { userId: 1, _id: 0 } })
     .toArray();
   const inativos = new Set(docs.map(d => d.userId));
   console.log('IDs inativos no Mongo:', Array.from(inativos));
   await mongoClient.close();
 
-  // Filtra INSERTs na tabela `users`
-  const dumpLines = fs.readFileSync(latestFile, 'utf8').split('\n');
-  const filtered = dumpLines.filter(line => {
-    if (line.startsWith('INSERT INTO `users`') || line.startsWith('INSERT INTO users')) {
-      return line
-        .replace(/\r$/, '')
-        .split(/\),\(/g)
-        .some(tuple => {
-          const clean = tuple.replace(/^\(?|\)?;?$/g, '');
-          const id = parseInt(clean.split(',')[0].replace(/\D/g, ''), 10);
-          return !inativos.has(id);
-        });
+  const lines = fs.readFileSync(latestFile, 'utf8').split('\n');
+  const output = [];
+
+  for (let line of lines) {
+    if (line.match(/^INSERT INTO [`]?users[`]?/i)) {
+      const [prefix, rest] = line.split(/VALUES/i);
+      if (!rest) {
+        output.push(line);
+        continue;
+      }
+      const header = prefix + 'VALUES';
+      const tuples = rest.trim().replace(/;$/, '').slice(1, -1).split(/\),\(/);
+      const kept = tuples.filter(t => {
+        const id = parseInt(t.split(',')[0].replace(/\D/g, ''), 10);
+        return !inativos.has(id);
+      });
+      if (kept.length > 0) {
+
+        output.push(`${header} (${kept.join('),(')});`);
+      } else {
+
+      }
+    } else {
+      output.push(line);
     }
-    return true;
-  });
+  }
 
-  // Grava dump limpo num arquivo temporário
-  const tempFile = latestFile + '.clean.sql';
-  fs.writeFileSync(tempFile, filtered.join('\n'));
-  console.log('Dump filtrado escrito em', tempFile);
+  const cleanFile = latestFile.replace(/\.sql$/, '.filtered.sql');
+  fs.writeFileSync(cleanFile, output.join('\n'));
+  console.log('Dump filtrado escrito em', cleanFile);
 
-  // Importa no MySQL
   const conn = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT
+    port: process.env.DB_PORT,
+    multipleStatements: true
   });
+
   console.log('Importando dump para o MySQL...');
-  const sql = fs.readFileSync(tempFile, 'utf8');
+  const sql = fs.readFileSync(cleanFile, 'utf8');
   await conn.query(sql);
 
-  // Ajusta AUTO_INCREMENT para não reusar IDs inativos
   const maxInativo = Math.max(...Array.from(inativos), 0);
   const nextAI = maxInativo + 1;
   console.log(`Ajustando AUTO_INCREMENT para ${nextAI}`);
