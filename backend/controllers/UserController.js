@@ -163,14 +163,12 @@ exports.deleteMe = async (req, res) => {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // 1) Tenta marcar inativo no Mongo (não bloqueia exclusão do MySQL)
     try {
       await UserInativo.create({ userId });
     } catch (mongoErr) {
       console.error('Falha ao marcar inativo no Mongo:', mongoErr.message);
     }
 
-    // 2) Exclui usuário do MySQL (cascata no Endereco e Favorito)
     await user.destroy({ transaction: t });
 
     await t.commit();
