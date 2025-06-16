@@ -1,4 +1,4 @@
-const Receita = require('../models/receita');
+const { Receita } = require('../models');
 require('dotenv').config();
 
 exports.registerReceita = async (req, res) => {
@@ -30,9 +30,16 @@ exports.registerReceita = async (req, res) => {
 };
 
 exports.getAllReceitas = async (req, res) => {
-  const receitas = await Receita.findAll();
-  res.json(receitas);
-};
+  try {
+    const receitas = await Receita.findAll();
+    res.json(receitas);
+  } catch (error) {
+    console.error('Erro ao buscar receitas:', error);
+    res.status(500).json({
+      error: 'Erro interno ao buscar receitas.',
+    });
+  }
+}
 
 exports.updateReceita = async (req, res) => {
   try {

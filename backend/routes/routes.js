@@ -25,6 +25,7 @@ router.post('/login', userController.login);
 router.get('/users', verifyToken, userController.getAllUsers);
 router.get('/user', verifyToken, userController.getMe);
 router.put('/user', verifyToken, userController.updateMe);
+router.post('/portabilidade/token', userController.portabilidadeLogin);
 router.delete('/user', verifyToken, userController.deleteMe);
 router.delete('/delete-soft', verifyToken, userController.deleteSoftMe);
 

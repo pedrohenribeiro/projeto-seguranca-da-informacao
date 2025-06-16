@@ -1,6 +1,5 @@
-// UserTerm.js
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('UserTerm', {
+  const UserTerm = sequelize.define('UserTerm', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -23,4 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'user_terms',
     timestamps: true,
   });
+
+  UserTerm.associate = (models) => {
+    UserTerm.belongsTo(models.User, { foreignKey: 'user_id' });
+    UserTerm.belongsTo(models.Term, { foreignKey: 'term_id' });
+  };
+
+  return UserTerm;
 };

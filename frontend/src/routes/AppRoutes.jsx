@@ -5,6 +5,9 @@ import Index from '../pages/Index';
 import Configuracoes from '../pages/Configuracoes';
 import EditarPefil from '../pages/EditarPerfil';
 import RegisterReceita from '../pages/RegisterReceita';
+import OAuthClientRegister from '../pages/OAuthClientRegister';
+import MinhasIntegracoes from '../pages/MinhasIntegracoes';
+import PrivateRoute from '../context/PrivateRoute';
 import { TermosServico } from '../pages/TermosServico'; 
 import PainelTermos from '../pages/PainelTermos'; 
 import DeleteAccount from '../pages/DeleteAccount';
@@ -19,6 +22,16 @@ const RoutesApp = () => {
       <Route path="/config" element={<Configuracoes />} />
       <Route path="/index" element={<Index />} />
       <Route path="/perfil/editar" element={<EditarPefil />} />
+      <Route path="/perfil/integracoes" element={<MinhasIntegracoes />} />
+      <Route path="/registerReceita" element={<RegisterReceita />} />
+      <Route
+        path="/oauth/clientRegister"
+        element={
+          <PrivateRoute requiredRole="empresa">
+            <OAuthClientRegister />
+          </PrivateRoute>
+        }
+      />
       <Route path="/perfil/excluir" element={<DeleteAccount />} />
       <Route path="/registerReceita" element={<RegisterReceita />} />
       <Route path="/painel-termos" element={<PainelTermos />} />
