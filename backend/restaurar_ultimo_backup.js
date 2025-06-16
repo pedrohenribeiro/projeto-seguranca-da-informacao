@@ -1,8 +1,8 @@
+// restore_last_backup.js
 const fs = require('fs');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 const mysql = require('mysql2/promise');
-
 require('dotenv').config();
 
 (async () => {
@@ -20,21 +20,20 @@ require('dotenv').config();
   const latestFile = path.join(BACKUP_DIR, files[0].name);
   console.log('Usando dump:', files[0].name);
 
-  const mongoUri = process.env.MONGO_URI;
-  const mongoClient = new MongoClient(mongoUri, { useUnifiedTopology: true });
+  // Conecta no Mongo e pega inativos
+  const mongoClient = new MongoClient(process.env.MONGO_URI);
   await mongoClient.connect();
-  const inativosColl = mongoClient.db().collection('usuarioInativos');
-  const docs = await inativosColl.find({}, { projection: { userId: 1, _id: 0 } }).toArray();
+  const docs = await mongoClient.db().collection('usuarioInativos')
+    .find({}, { projection: { userId: 1, _id: 0 } })
+    .toArray();
   const inativos = new Set(docs.map(d => d.userId));
-  console.log(`IDs inativos no Mongo:`, Array.from(inativos));
+  console.log('IDs inativos no Mongo:', Array.from(inativos));
   await mongoClient.close();
 
+  // Filtra INSERTs na tabela `users`
   const dumpLines = fs.readFileSync(latestFile, 'utf8').split('\n');
   const filtered = dumpLines.filter(line => {
-    if (
-      line.startsWith('INSERT INTO `users`') ||
-      line.startsWith('INSERT INTO users')
-    ) {
+    if (line.startsWith('INSERT INTO `users`') || line.startsWith('INSERT INTO users')) {
       return line
         .replace(/\r$/, '')
         .split(/\),\(/g)
@@ -47,10 +46,12 @@ require('dotenv').config();
     return true;
   });
 
+  // Grava dump limpo num arquivo temporário
   const tempFile = latestFile + '.clean.sql';
   fs.writeFileSync(tempFile, filtered.join('\n'));
   console.log('Dump filtrado escrito em', tempFile);
 
+  // Importa no MySQL
   const conn = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -58,11 +59,11 @@ require('dotenv').config();
     database: process.env.DB_NAME,
     port: process.env.DB_PORT
   });
-
   console.log('Importando dump para o MySQL...');
   const sql = fs.readFileSync(tempFile, 'utf8');
   await conn.query(sql);
 
+  // Ajusta AUTO_INCREMENT para não reusar IDs inativos
   const maxInativo = Math.max(...Array.from(inativos), 0);
   const nextAI = maxInativo + 1;
   console.log(`Ajustando AUTO_INCREMENT para ${nextAI}`);

@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { FaUserEdit, FaCreditCard, FaSignOutAlt, FaExchangeAlt, FaClipboardList, FaTrash } from 'react-icons/fa';
-import { FaUserEdit, FaTrashAlt, FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
 
 const formatarCPF = (cpf) => {
   if (!cpf) return 'Não informado';
@@ -60,12 +58,6 @@ export default function Configuracoes() {
   const [isLoading, setIsLoading] = useState(true);
   const [erros, setErros] = useState({ cpf: '', email: '', telefone: '' });
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { logout } = useAuth();
-
-  const fecharModal = () => {
-    setIsModalOpen(false);
-  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -107,27 +99,6 @@ export default function Configuracoes() {
     localStorage.removeItem('token');
     navigate('/login');
   };
-  const navigationItems = [
-    { icon: <FaUserEdit />, label: 'Editar Informações Pessoais', path: '/perfil/editar' },
-    { icon: <FaTrashAlt />, label: 'Deletar Informações Pessoais', onClick: () => setIsModalOpen(true) },  
-    { icon: <FaExchangeAlt />, label: 'Fazer Portabilidade', path: '/perfil/portabilidade' },
-  ];
-  
-    const handleLogout = () => {
-      logout();
-      localStorage.removeItem('token');
-      navigate('/login');
-    };
-
-  const handleDelete = async () => {  
-      try {
-        await API.delete('/user');
-        alert('Seu usuário foi deletado com sucesso!');
-        handleLogout();
-      } catch (err) {
-        alert('Erro ao cadastrar: ' + (err.response?.data?.error || err.message));
-      }
-    };
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -212,8 +183,6 @@ export default function Configuracoes() {
                 {user.role === 'admin' && (
                   <button
                     onClick={() => navigate('/painel-termos')}
-                    key={item.label}
-                    onClick={item.onClick ? item.onClick : () => navigate(item.path)}
                     className="flex items-center space-x-3 bg-gray-50 hover:bg-gray-100 p-4 rounded-lg shadow-sm transition"
                   >
                     <span className="text-gray-900 text-xl"><FaClipboardList /></span>
@@ -256,25 +225,6 @@ export default function Configuracoes() {
           <p className="text-center text-gray-500 p-8">Não foi possível carregar as informações do usuário.</p>
         )}
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button onClick={fecharModal} className="modal-close">✖</button>
-            <h2 className="modal-title">Confirmar Exclusão</h2>
-            <p className="modal-text">
-              Tem certeza de que deseja deletar suas informações pessoais? Esta ação não poderá ser desfeita.
-            </p>
-            <div className="flex justify-end gap-4 mt-4">
-              <button onClick={fecharModal} className="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
-              <button 
-                className="bg-red-600 text-white px-4 py-2 rounded"
-                onClick={handleDelete}>Confirmar</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

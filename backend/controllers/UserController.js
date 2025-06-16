@@ -131,19 +131,18 @@ exports.getMe = async (req, res) => {
 exports.updateMe = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { nome, email, telefone, cpf } = req.body;
+    const { username, email, telefone, password } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    if (nome) user.nome = nome;
+    if (username) user.username = username;
     if (email) user.email = email;
     if (telefone) user.telefone = telefone;
-    if (cpf) user.cpf = cpf;
-    /*if (password) {
+    if (password) {
       const hashed = await bcrypt.hash(password, 10);
       user.password = hashed;
-    }*/
+    }
 
     await user.save();
 
@@ -158,38 +157,27 @@ exports.deleteMe = async (req, res) => {
   let t;
   try {
     t = await sequelize.transaction();
-  try {
-    const userId = req.user.id;
-
-    const user = await User.findByPk(userId);
-    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
-
-    await user.destroy();
-
-    res.json({ message: 'Usuário deletado com sucesso' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-
     const user = await User.findByPk(userId, { transaction: t });
     if (!user) {
       await t.rollback();
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // 1) Marca como inativo no Mongo
-    await UserInativo.create({ userId });
+    // 1) Tenta marcar inativo no Mongo (não bloqueia exclusão do MySQL)
+    try {
+      await UserInativo.create({ userId });
+    } catch (mongoErr) {
+      console.error('Falha ao marcar inativo no Mongo:', mongoErr.message);
+    }
 
-    // 2) Remove do MySQL (cascata em Favoritos e Endereco)
+    // 2) Exclui usuário do MySQL (cascata no Endereco e Favorito)
     await user.destroy({ transaction: t });
 
     await t.commit();
-    res.json({ message: 'Conta removida e marcada como inativa.' });
+    return res.json({ message: 'Conta removida com sucesso.' });
   } catch (err) {
     if (t) await t.rollback();
     console.error('Erro em deleteMe:', err);
-    res.status(500).json({ error: 'Erro ao apagar conta' });
+    return res.status(500).json({ error: 'Erro ao apagar conta' });
   }
 };
