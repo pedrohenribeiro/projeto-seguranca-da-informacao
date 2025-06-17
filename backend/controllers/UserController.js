@@ -7,7 +7,7 @@ const sequelize = db.sequelize;
 const UserInativo = require('../models/UserInativo');
 const User = db.User;
 const UserTerm = db.UserTerm;
-const Term = db.Term; // import do model Term
+const Term = db.Term; 
 
 
 exports.register = async (req, res) => {
@@ -61,28 +61,27 @@ exports.login = async (req, res) => {
       expiresIn: '1d'
     });
 
-    // Buscar todos os termos cadastrados
+
     const todosTermos = await Term.findAll();
 
-    // Buscar termos aceitos pelo usuário
     const termosAceitos = await UserTerm.findAll({
       where: { user_id: user.id }
     });
 
     const idsAceitos = termosAceitos.map(t => t.term_id);
 
-    // Verificar se há termos não aceitos
+
     const termosNaoAceitos = todosTermos.filter(termo => !idsAceitos.includes(termo.id));
     const alertaNovosTermos = termosNaoAceitos.length > 0;
 
-    // Verificar se aceitou o termo de comunicações promocionais (ID 14)
+
     const comunicacoesPromocionaisAtivas = idsAceitos.includes(14);
 
     res.json({
       token,
       alertaNovosTermos,
       mensagem: alertaNovosTermos
-        ? 'Novos termos de serviço foram adicionados. Por favor, revise na tela de Termos de Serviço.'
+        ? 'Uma nova versão dos termos de serviço está disponível. Por favor, revise a atualização na tela de Termos de Serviço.'
         : null,
       comunicacoesPromocionaisAtivas,
     });
@@ -114,12 +113,12 @@ exports.getMe = async (req, res) => {
 
     const idsAceitos = termosAceitos.map(t => t.term_id);
 
-    // Verifica se o usuário aceitou o termo de comunicações promocionais (ID 14)
+  
     const comunicacoesPromocionaisAtivas = idsAceitos.includes(14);
 
     res.json({
       ...user.toJSON(),
-      termosAceitos: idsAceitos, // array com IDs dos termos aceitos
+      termosAceitos: idsAceitos, 
       comunicacoesPromocionaisAtivas,
     });
   } catch (err) {

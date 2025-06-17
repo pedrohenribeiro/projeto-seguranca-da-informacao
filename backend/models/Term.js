@@ -1,20 +1,30 @@
+// models/Term.js
 module.exports = (sequelize, DataTypes) => {
   const Term = sequelize.define('Term', {
     nome: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     detalhes: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     obrigatorio: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
-    }
+      defaultValue: false,
+    },
+    term_version_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'term_versions',
+        key: 'id',
+      },
+    },
   }, {
     tableName: 'terms',
-    timestamps: true
+    timestamps: true,
+    underscored: false,
   });
 
   Term.associate = (models) => {

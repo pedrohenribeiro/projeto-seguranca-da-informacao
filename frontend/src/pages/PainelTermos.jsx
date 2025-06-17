@@ -86,7 +86,6 @@ export default function PainelTermos() {
               <th className="p-3 text-left text-sm font-semibold">Detalhes</th>
               <th className="p-3 text-left text-sm font-semibold">Obrigatório</th>
               <th className="p-3 text-left text-sm font-semibold">Criado em</th>
-              <th className="p-3 text-left text-sm font-semibold">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -99,22 +98,6 @@ export default function PainelTermos() {
                   {termo.createdAt
                     ? format(new Date(termo.createdAt), 'dd/MM/yyyy HH:mm')
                     : 'N/A'}
-                </td>
-                <td className="p-3 space-x-2 flex items-center">
-                  <button
-                    onClick={() => abrirModalEdicao(termo)}
-                    className="text-blue-600 hover:text-blue-800 transition"
-                    title="Editar termo"
-                  >
-                    <Pencil size={20} />
-                  </button>
-                  <button
-                    onClick={() => excluirTermo(termo.id)}
-                    className="text-red-600 hover:text-red-800 transition ml-2"
-                    title="Excluir termo"
-                  >
-                    <Trash2 size={20} />
-                  </button>
                 </td>
               </tr>
             ))}

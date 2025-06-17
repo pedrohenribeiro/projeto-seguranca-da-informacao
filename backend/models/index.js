@@ -18,19 +18,48 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach(file => {
-    const modelPath = path.join(__dirname, file);
-    const modelExport = require(modelPath);
+    const modelModule = require(path.join(__dirname, file));
 
-    const model = modelExport(sequelize, Sequelize.DataTypes);
+    let model;
+
+    // Se o model exportar uma classe que herda de Sequelize.Model
+    if (typeof modelModule === 'function' && modelModule.prototype instanceof Sequelize.Model) {
+      model = modelModule; // vai usar init depois
+      model.init(model.rawAttributes, {
+        sequelize,
+        modelName: model.name,
+        tableName: model.tableName || undefined,
+        timestamps: model.options?.timestamps,
+      });
+    }
+    // Se for uma factory function tradicional (define)
+    else if (typeof modelModule === 'function') {
+      model = modelModule(sequelize, Sequelize.DataTypes);
+    } else {
+      model = modelModule;
+    }
 
     db[model.name] = model;
   });
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+// Associações
+const { User, Term, UserTerm } = db;
+
+if (User && Term && UserTerm) {
+  User.belongsToMany(Term, {
+    through: UserTerm,
+    foreignKey: 'user_id',
+    otherKey: 'term_id',
+    as: 'termsAccepted'
+  });
+
+  Term.belongsToMany(User, {
+    through: UserTerm,
+    foreignKey: 'term_id',
+    otherKey: 'user_id',
+    as: 'usersAccepted'
+  });
+}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -31,8 +31,6 @@ router.delete('/delete-soft', verifyToken, userController.deleteSoftMe);
 
 router.get('/terms', TermController.getAllTerms);
 router.post('/terms', TermController.createTerm);
-router.delete('/terms/:id', TermController.deleteTerm);
-router.put('/terms/:id', TermController.atualizarTermo);
 
 
 

@@ -40,7 +40,6 @@ export const TermosServico = () => {
 
   const handleToggle = async (termo: Termo) => {
     if (termo.obrigatorio) {
-      // Não permite desmarcar termos obrigatórios
       alert('Este termo é obrigatório e não pode ser desmarcado.');
       return;
     }
@@ -48,7 +47,6 @@ export const TermosServico = () => {
     const token = localStorage.getItem('token');
     try {
       if (!termo.aceito) {
-        // Termo ainda não aceito, vamos aceitar
         const res = await fetch(
           `http://localhost:3000/api/user/terms/${termo.id}/accept`,
           {
@@ -64,7 +62,6 @@ export const TermosServico = () => {
           throw new Error(data.error || 'Erro ao aceitar termo');
         }
 
-        // Atualiza o estado local
         setTermos((prev) =>
           prev.map((t) =>
             t.id === termo.id
@@ -73,7 +70,6 @@ export const TermosServico = () => {
           )
         );
       } else {
-        // Termo já aceito, vamos desaceitar
         console.log('Token:', token);
         const res = await fetch(
           `http://localhost:3000/api/user/terms/${termo.id}/unaccept`,
@@ -90,7 +86,6 @@ export const TermosServico = () => {
           throw new Error(data.error || 'Erro ao desmarcar termo');
         }
 
-        // Atualiza o estado local
         setTermos((prev) =>
           prev.map((t) =>
             t.id === termo.id ? { ...t, aceito: false, aceito_em: undefined } : t
