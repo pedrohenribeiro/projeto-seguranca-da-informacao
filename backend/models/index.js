@@ -22,18 +22,15 @@ fs.readdirSync(__dirname)
 
     let model;
 
-    // Se o model exportar uma classe que herda de Sequelize.Model
     if (typeof modelModule === 'function' && modelModule.prototype instanceof Sequelize.Model) {
-      model = modelModule; // vai usar init depois
+      model = modelModule;
       model.init(model.rawAttributes, {
         sequelize,
         modelName: model.name,
         tableName: model.tableName || undefined,
         timestamps: model.options?.timestamps,
       });
-    }
-    // Se for uma factory function tradicional (define)
-    else if (typeof modelModule === 'function') {
+    } else if (typeof modelModule === 'function') {
       model = modelModule(sequelize, Sequelize.DataTypes);
     } else {
       model = modelModule;
@@ -42,24 +39,11 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
   });
 
-// Associações
-const { User, Term, UserTerm } = db;
-
-if (User && Term && UserTerm) {
-  User.belongsToMany(Term, {
-    through: UserTerm,
-    foreignKey: 'user_id',
-    otherKey: 'term_id',
-    as: 'termsAccepted'
-  });
-
-  Term.belongsToMany(User, {
-    through: UserTerm,
-    foreignKey: 'term_id',
-    otherKey: 'user_id',
-    as: 'usersAccepted'
-  });
-}
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

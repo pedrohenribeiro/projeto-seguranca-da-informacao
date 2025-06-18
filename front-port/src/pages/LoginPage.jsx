@@ -32,7 +32,7 @@ export default function LoginPage() {
   };
 
   const handleCookNowLogin = () => {
-  const clientId = '0f007095b259aeaef9149aa7e9d61dbb';
+  const clientId = 'b2667524e787b80ead554eaa4cf9850e';
   const redirectUri = `${window.location.origin}/cooknow/callback`;
 
   const state = crypto.randomUUID();

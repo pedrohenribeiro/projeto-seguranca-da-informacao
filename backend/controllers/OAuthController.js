@@ -159,20 +159,24 @@ module.exports = {
           }]
         });
 
-        const integracoes = grants.map(grant => ({
-          nomeApp: grant.clientApp?.name,
-          client_id: grant.clientApp?.client_id,
-          scopes: grant.scopes,
-          concedido_em: grant.granted_at,
-        }));
+        const integracoes = grants.map(grant => {
+          return {
+            nomeApp: grant.clientApp?.name,
+            client_id: grant.clientApp?.client_id,
+            scopes: grant.scopes,
+            concedido_em: grant.granted_at,
+          };
+        });
 
         return res.json({ tipo: 'usuario', integracoes });
       }
     } catch (err) {
-      console.error('Erro ao buscar integrações', err);
+      console.error('Erro ao buscar integrações:', err.message);
+      console.error(err.stack);
       res.status(500).json({ error: 'Erro interno ao buscar integrações' });
     }
   },
+
 
   async deleteIntegration(req, res) {
     const { id: userId, role } = req.user;
